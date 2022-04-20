@@ -14,7 +14,7 @@
         <Image x:Name="MenuHeader" HorizontalAlignment="Left" Height="96"  VerticalAlignment="Top" Width="265" Source="/Assets/Sprites/MenuHeader.png" Margin="-2,-2,0,0"/>
         <Image x:Name="HeaderLogo" MouseEnter="MenuHeader_MouseEnter" MouseLeave="MenuHeader_MouseLeave" HorizontalAlignment="Left" Height="85" VerticalAlignment="Top" Width="85" Source="/Assets/Branding/White/Logo/Sizes/Logo1_White_150.png" Margin="-2,-2,0,0"/>
 
-        <ComboBox Style="{DynamicResource ComboBoxStyle}" Cursor="Hand" x:Name="GamesCombo" SelectionChanged="GamesCombo_SelectionChanged" Margin="0,32,127,0" VerticalAlignment="Top" Height="30" BorderThickness="0,0,0,0" Foreground="White" Background="#FF9017AC" BorderBrush="#FF571A65" HorizontalAlignment="Right" Width="192" FontFamily="Dubai" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Template="{DynamicResource ComboBoxTemplate}" FontWeight="Bold" FontSize="15">
+        <ComboBox Style="{DynamicResource ComboBoxStyle}" Cursor="Hand" x:Name="GamesCombo" SelectionChanged="GamesCombo_SelectionChanged" Margin="0,32,127,0" VerticalAlignment="Top" Height="30" BorderThickness="0,0,0,0" Foreground="White" Background="#FFFFF500" BorderBrush="#FF571A65" HorizontalAlignment="Right" Width="192" FontFamily="Dubai" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Template="{DynamicResource ComboBoxTemplate}" FontWeight="Bold" FontSize="15">
             <ComboBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ComboBoxItem}">
                     <Setter Property="Template">

@@ -12,7 +12,7 @@
     <Product>LIFTOFF</Product>
     <Description>A game launcher for Steam.</Description>
     <Copyright>LIFTOFF</Copyright>
-    <PackageIcon>Logo1_White_150.png</PackageIcon>
+    <PackageIcon>Logo1_White_Icon.png</PackageIcon>
     <AssemblyVersion>0.0.3.7</AssemblyVersion>
     <FileVersion>0.0.3.7</FileVersion>
     <Company>$(Authors)</Company>
@@ -29,7 +29,6 @@
     <None Remove="Assets\Branding\Purple\Logo\Sizes\Logo1_Purple_500.png" />
     <None Remove="Assets\Branding\Purple\Logo\Sizes\Logo1_Purple_750.png" />
     <None Remove="Assets\Branding\White\Logo\Sizes\Logo1_White_1000.png" />
-    <None Remove="Assets\Branding\White\Logo\Sizes\Logo1_White_150.png" />
     <None Remove="Assets\Branding\White\Logo\Sizes\Logo1_White_300.png" />
     <None Remove="Assets\Branding\White\Logo\Sizes\Logo1_White_500.png" />
     <None Remove="Assets\Branding\White\Logo\Sizes\Logo1_White_750.png" />
@@ -81,6 +80,7 @@
     <Resource Include="Assets\Branding\White\Logo\Sizes\Logo1_White_300.png" />
     <Resource Include="Assets\Branding\White\Logo\Sizes\Logo1_White_500.png" />
     <Resource Include="Assets\Branding\White\Logo\Sizes\Logo1_White_750.png" />
+    <Resource Include="Assets\Branding\White\Logo\Sizes\Logo1_White_Icon.png" />
     <Resource Include="Assets\Branding\White\Title\Sizes\Title_W_1000.png" />
     <Resource Include="Assets\Branding\White\Title\Sizes\Title_W_150.png" />
     <Resource Include="Assets\Branding\White\Title\Sizes\Title_W_1500.png" />
@@ -102,19 +102,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="D:\Core (Storage)\LIFTOFF\Images\Logo1_White_150.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="Interop.IWshRuntimeLibrary">
       <HintPath>..\..\Blaze\Blaze\obj\Debug\Interop.IWshRuntimeLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\Branding\White\Logo\Sizes\Logo1_White_150.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="Assets\Branding\White\Logo\Sizes\Logo1_White_Icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Update="ROCKET.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
