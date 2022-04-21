@@ -13,10 +13,10 @@
     <Description>A game launcher for Steam.</Description>
     <Copyright>LIFTOFF</Copyright>
     <PackageIcon>Logo1_White_Icon.png</PackageIcon>
-    <AssemblyVersion>0.0.3.7</AssemblyVersion>
-    <FileVersion>0.0.3.7</FileVersion>
+    <AssemblyVersion>0.0.3.8</AssemblyVersion>
+    <FileVersion>0.0.3.8</FileVersion>
     <Company>$(Authors)</Company>
-    <Version>0.0.3.7</Version>
+    <Version>0.0.3.8</Version>
     <SignAssembly>False</SignAssembly>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
