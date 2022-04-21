@@ -141,6 +141,8 @@ namespace LIFTOFF.Windows
             HelpPage.Visibility = Visibility.Hidden;
             SettingsPage.Visibility = Visibility.Hidden;
             CreditsPage.Visibility = Visibility.Hidden;
+            IntroPage.Visibility = Visibility.Hidden;
+            PAGE_TEMPLATE.Visibility = Visibility.Hidden;
         }
         #endregion
 
@@ -346,9 +348,15 @@ namespace LIFTOFF.Windows
             }
         }
 
-        private void GamesBtn_Click(object sender, RoutedEventArgs e)
+        private async void GamesBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentPage != "games") ShowGamesPage();
+            Busy.Visibility = Visibility.Visible;
+            BusyTxtTitle.Text = "GETTING YOUR GAMES...";
+            if (CurrentPage != "games")
+            {
+                
+                ShowGamesPage();
+            }
         }
 
         private void ServersBtn_Click(object sender, RoutedEventArgs e)
@@ -396,45 +404,58 @@ namespace LIFTOFF.Windows
             //Gets the game list
             Functions.Games.GetLocalGames();
             GamesCombo.ItemsSource = Variables.GameList;
+            DisplayGames();
 
-            //Set last used game
-            string lastGame = Functions.Config.getVariable("LastUsedGameAppID");
-            if (lastGame != "")
+            //Intro
+            string introComplete = Functions.Config.getVariable("IntroComplete");
+            if (introComplete == "" || !bool.Parse(introComplete))
             {
-                uint appID = uint.Parse(lastGame);
-                Functions.Game game = Variables.GameList.FirstOrDefault(game => game.AppID == appID);
-                if (game != null)
-                {
-                    Variables.CurrentGame = game;
-
-                    GamesCombo.SelectedItem = game;
-                }
+                //Show Intro
+                ShowIntroPage();
             }
-
-            //Show last open Page
-            string lastPage = Functions.Config.getVariable("LastPageOpen");
-            if (lastPage != "" && Variables.CurrentGame.Title != "")
+            else
             {
-                switch (lastPage)
+
+
+                //Set last used game
+                string lastGame = Functions.Config.getVariable("LastUsedGameAppID");
+                if (lastGame != "")
                 {
-                    case "games":
-                        ShowGamesPage();
-                        break;
-                    case "servers":
-                        ShowServersPage();
-                        break;
-                    case "mods":
-                        ShowModsPage();
-                        break;
-                    case "help":
-                        ShowHelpPage();
-                        break;
-                    default:
-                        ShowGamesPage();
-                        break;
+                    uint appID = uint.Parse(lastGame);
+                    Functions.Game game = Variables.GameList.FirstOrDefault(game => game.AppID == appID);
+                    if (game != null)
+                    {
+                        Variables.CurrentGame = game;
+
+                        GamesCombo.SelectedItem = game;
+                    }
                 }
+
+                //Show last open Page
+                string lastPage = Functions.Config.getVariable("LastPageOpen");
+                if (lastPage != "" && Variables.CurrentGame.Title != "")
+                {
+                    switch (lastPage)
+                    {
+                        case "games":
+                            ShowGamesPage();
+                            break;
+                        case "servers":
+                            ShowServersPage();
+                            break;
+                        case "mods":
+                            ShowModsPage();
+                            break;
+                        case "help":
+                            ShowHelpPage();
+                            break;
+                        default:
+                            ShowGamesPage();
+                            break;
+                    }
+                }
+                else ShowGamesPage();
             }
-            else ShowGamesPage();
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -443,14 +464,15 @@ namespace LIFTOFF.Windows
         }
         #endregion
 
-        #region Games
-        private async void ShowGamesPage()
+        #region Games Page
+        private async Task ShowGamesPage()
         {
             PlayBtn.IsEnabled = false;
             GamesBtn.Focus();
             HidePages();
             GamesPage.Visibility = Visibility.Visible;
             CurrentPage = "games";
+            PageName.Text = CurrentPage.ToUpper();
 
             if (Variables.CurrentGame.Title != "")
             {
@@ -668,10 +690,6 @@ namespace LIFTOFF.Windows
             if (GameList.ItemsSource != null) GameList.ItemsSource = null;
             if (GamesCombo.ItemsSource != null) GamesCombo.ItemsSource = null;
 
-            Busy.Visibility = Visibility.Visible;
-            BusyTxtTitle.Text = "CHECKING GAMES";
-            BusyTxtMessage.Text = "Please wait...";
-
             GameList.ItemsSource = Variables.GameList;
 
             GamesCombo.ItemsSource = Variables.GameList;
@@ -688,13 +706,14 @@ namespace LIFTOFF.Windows
         }
 
         #endregion
-        #region Servers
+        #region Servers Page
         private async void ShowServersPage(Functions.Server serverToDisplay = null)
         {
             ServersBtn.Focus();
             HidePages();
             ServersPage.Visibility = Visibility.Visible;
             CurrentPage = "servers";
+            PageName.Text = CurrentPage.ToUpper();
             ServerList.Items.Clear();
             PlayBtn.IsEnabled = false;
 
@@ -836,7 +855,7 @@ namespace LIFTOFF.Windows
         }
 
         #endregion
-        #region Mods
+        #region Mods Page
         private void ShowModsPage()
         {
             PlayBtn.IsEnabled = false;
@@ -844,6 +863,7 @@ namespace LIFTOFF.Windows
             HidePages();
             ModsPage.Visibility = Visibility.Visible;
             CurrentPage = "mods";
+            PageName.Text = CurrentPage.ToUpper();
 
             if (Functions.Discord.DiscordAlive() && !Variables.GameRunning && !Variables.GameRunning)
             {
@@ -862,7 +882,7 @@ namespace LIFTOFF.Windows
             }
         }
         #endregion
-        #region Help
+        #region Help Page
         private void ShowHelpPage()
         {
             PlayBtn.IsEnabled = false;
@@ -870,6 +890,7 @@ namespace LIFTOFF.Windows
             HidePages();
             HelpPage.Visibility = Visibility.Visible;
             CurrentPage = "help";
+            PageName.Text = CurrentPage.ToUpper();
 
             if (Functions.Discord.DiscordAlive() && !Variables.GameRunning)
             {
@@ -888,7 +909,7 @@ namespace LIFTOFF.Windows
             }   
         }
         #endregion
-        #region Credits
+        #region Credits Page
         private void ShowCreditsPage()
         {
             PlayBtn.IsEnabled = false;
@@ -896,6 +917,7 @@ namespace LIFTOFF.Windows
             HidePages();
             CreditsPage.Visibility = Visibility.Visible;
             CurrentPage = "credits";
+            PageName.Text = CurrentPage.ToUpper();
 
             if (Functions.Discord.DiscordAlive() && !Variables.GameRunning)
             {
@@ -918,7 +940,7 @@ namespace LIFTOFF.Windows
             OpenUrl("https://publiczeus.com");
         }
         #endregion
-        #region Settings
+        #region Settings Page
         private void ShowSettingsPage()
         {
             PlayBtn.IsEnabled = false;
@@ -926,12 +948,103 @@ namespace LIFTOFF.Windows
             HidePages();
             SettingsPage.Visibility = Visibility.Visible;
             CurrentPage = "settings";
+            PageName.Text = CurrentPage.ToUpper();
 
             if (Functions.Discord.DiscordAlive() && !Variables.GameRunning)
             {
                 Functions.Discord.discord.client.SetPresence(new RichPresence()
                 {
                     Details = "Tweeking their Settings",
+                    State = Variables.CurrentGame.Title,
+                    Timestamps = Functions.Discord.startTime,
+                    Buttons = new DiscordRPC.Button[] { new DiscordRPC.Button() { Label = "GET LIFTOFF!", Url = "https://google.com" } },
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "logo_1000",
+                        LargeImageText = "LIFTOFF",
+                    }
+                });
+            }
+        }
+        #endregion
+        #region Intro Page
+        private void ShowIntroPage()
+        {
+            PlayBtn.IsEnabled = false;
+            GamesBtn.IsEnabled = false;
+            ServersBtn.IsEnabled = false;
+            ModsBtn.IsEnabled = false;
+            HelpBtn.IsEnabled = false;
+            FullscreenBtn.IsEnabled = false;
+            SettingsBtn.IsEnabled = false;
+            RndServerBtn.IsEnabled = false;
+            GamesCombo.IsEnabled = false;
+            CreditsBtn.IsEnabled = false;
+            MinBtn.IsEnabled = false;
+            MaxBtn.IsEnabled = false;
+
+            HidePages();
+            IntroPage.Visibility = Visibility.Visible;
+            CurrentPage = "intro";
+            PageName.Text = CurrentPage.ToUpper();
+
+            if (Functions.Discord.DiscordAlive() && !Variables.GameRunning)
+            {
+                Functions.Discord.discord.client.SetPresence(new RichPresence()
+                {
+                    Details = "Getting started...",
+                    State = Variables.CurrentGame.Title,
+                    Timestamps = Functions.Discord.startTime,
+                    Buttons = new DiscordRPC.Button[] { new DiscordRPC.Button() { Label = "GET LIFTOFF!", Url = "https://google.com" } },
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "logo_1000",
+                        LargeImageText = "LIFTOFF",
+                    }
+                });
+            }
+        }
+
+        private async void IntroDone_Click(object sender, RoutedEventArgs e)
+        {
+            await IntroComplete();
+            ShowGamesPage();
+        }
+
+        public async Task IntroComplete()
+        {
+            PlayBtn.IsEnabled = true;
+            GamesBtn.IsEnabled = true;
+            ServersBtn.IsEnabled = true;
+            ModsBtn.IsEnabled = true;
+            HelpBtn.IsEnabled = true;
+            FullscreenBtn.IsEnabled = true;
+            SettingsBtn.IsEnabled = true;
+            RndServerBtn.IsEnabled = true;
+            GamesCombo.IsEnabled = true;
+            CreditsBtn.IsEnabled = true;
+            MinBtn.IsEnabled = true;
+            MaxBtn.IsEnabled = true;
+
+            Functions.Config.storeVariable("IntroComplete", bool.TrueString);
+        }
+
+        #endregion
+
+        #region PAGE_TEMPLATE
+        private void ShowPAGE_NAMEPage()
+        {
+            PlayBtn.IsEnabled = false;
+            HidePages();
+            //PAGE_NAME.Visibility = Visibility.Visible;
+            CurrentPage = "PAGE_NAME";
+            PageName.Text = CurrentPage.ToUpper();
+
+            if (Functions.Discord.DiscordAlive() && !Variables.GameRunning)
+            {
+                Functions.Discord.discord.client.SetPresence(new RichPresence()
+                {
+                    Details = "DISCORD STATUS...",
                     State = Variables.CurrentGame.Title,
                     Timestamps = Functions.Discord.startTime,
                     Buttons = new DiscordRPC.Button[] { new DiscordRPC.Button() { Label = "GET LIFTOFF!", Url = "https://google.com" } },

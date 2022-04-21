@@ -32,26 +32,34 @@ namespace LIFTOFF.Functions
             get
             {
                 ImageBrush bannerImg;
-
-                try
+                if (cachedBanner == null)
                 {
-                    bannerImg = Games.ImgBrushFromURL(BannerURL).Result;
+                    try
+                    {
+                        bannerImg = Games.ImgBrushFromURL(BannerURL).Result;
+                        cachedBanner = bannerImg;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Error Getting Banner!");
+                        bannerImg = Games.ImgBrushFromURL(DefaultBannerURL).Result;
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Error Getting custom Banner!");
-                    bannerImg = Games.ImgBrushFromURL(DefaultBannerURL).Result;
+                    bannerImg = cachedBanner;
                 }
 
                 return bannerImg.ImageSource;
             }
         }
+        private ImageBrush cachedBanner { get; set; }
 
         public string BannerURL
         {
             get
             {
-                if (CustomBannerURL != null) return CustomBannerURL;
+                if (CustomBannerURL != "") return CustomBannerURL;
                 else return DefaultBannerURL;
             }
             set 
@@ -83,7 +91,7 @@ namespace LIFTOFF.Functions
         public static async Task<ImageBrush> ImgBrushFromURL(string URL = null)
         {
             ImageBrush ImgBrush = new ImageBrush();
-            if (URL != null)
+            if (URL != "")
             {
                 Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Getting image from url (" + URL + ")");
                 WebRequest ImgRequest = WebRequest.Create(URL);
@@ -96,10 +104,8 @@ namespace LIFTOFF.Functions
                 ImgBitmap.StreamSource = ImgStream;
                 ImgBitmap.EndInit();
 
-                
-                ImgBrush.ImageSource = ImgBitmap;
 
-                
+                ImgBrush.ImageSource = ImgBitmap;
             }
             return ImgBrush;
         }

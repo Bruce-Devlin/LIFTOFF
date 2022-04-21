@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:LIFTOFF.Windows"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="Home" Height="508" MinHeight="400" Width="848" MinWidth="614" WindowStyle="None" ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen" Background="#FF131313" AllowsTransparency="True" BorderThickness="2,2,2,2" BorderBrush="#FF9017AC">
+        Title="Home" Height="283" MinHeight="400" Width="278" MinWidth="614" WindowStyle="None" ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen" Background="#FF131313" AllowsTransparency="True" BorderThickness="2,2,2,2" BorderBrush="#FF9017AC">
     <Grid Margin="2,2,-2,-2" Focusable="True">
 
         <Image Source="/Assets/Branding/Pattern.png" Opacity="0.01" Stretch="UniformToFill"/>
@@ -14,7 +14,7 @@
         <Image x:Name="MenuHeader" HorizontalAlignment="Left" Height="96"  VerticalAlignment="Top" Width="265" Source="/Assets/Sprites/MenuHeader.png" Margin="-2,-2,0,0"/>
         <Image x:Name="HeaderLogo" MouseEnter="MenuHeader_MouseEnter" MouseLeave="MenuHeader_MouseLeave" HorizontalAlignment="Left" Height="85" VerticalAlignment="Top" Width="85" Source="/Assets/Branding/White/Logo/Sizes/Logo1_White_150.png" Margin="-2,-2,0,0"/>
 
-        <ComboBox Style="{DynamicResource ComboBoxStyle}" Cursor="Hand" x:Name="GamesCombo" SelectionChanged="GamesCombo_SelectionChanged" Margin="0,32,127,0" VerticalAlignment="Top" Height="30" BorderThickness="0,0,0,0" Foreground="White" Background="#FFFFF500" BorderBrush="#FF571A65" HorizontalAlignment="Right" Width="192" FontFamily="Dubai" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Template="{DynamicResource ComboBoxTemplate}" FontWeight="Bold" FontSize="15">
+        <ComboBox Style="{DynamicResource ComboBoxStyle}" Cursor="Hand" x:Name="GamesCombo" SelectionChanged="GamesCombo_SelectionChanged" Margin="0,32,127,0" VerticalAlignment="Top" Height="30" BorderThickness="0,0,0,0" Foreground="White" Background="#FF471852" BorderBrush="#FF571A65" HorizontalAlignment="Right" Width="192" FontFamily="Dubai" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Template="{DynamicResource ComboBoxTemplate}" FontWeight="Bold" FontSize="15">
             <ComboBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ComboBoxItem}">
                     <Setter Property="Template">
@@ -38,7 +38,7 @@
                 </Style>
             </ComboBox.ItemContainerStyle>
         </ComboBox>
-        <Button Cursor="Hand" x:Name="RndServerBtn" Content="？" Click="RndServerBtn_Click" HorizontalAlignment="Right" Height="32" Margin="0,31,92,0" VerticalAlignment="Top" Width="32" Style="{DynamicResource MainButtonStyke}" Background="#FF9017AC" Foreground="White" FontWeight="Bold" BorderBrush="{x:Null}" FontFamily="Dubai" FontSize="15" IsEnabled="False" ToolTip="Find a random server"/>
+        <Button Cursor="Hand" x:Name="RndServerBtn" Content="？" Click="RndServerBtn_Click" HorizontalAlignment="Right" Height="32" Margin="0,31,92,0" VerticalAlignment="Top" Width="32" Style="{DynamicResource MainButtonStyke}" Background="#FF9017AC" Foreground="White" FontWeight="Bold" BorderBrush="{x:Null}" FontFamily="Dubai" FontSize="15" IsEnabled="False" ToolTip=""/>
         <Button Cursor="Hand" x:Name="PlayBtn" Content="PLAY ▶" Click="PlayBtn_Click" HorizontalAlignment="Right" Height="32" Margin="0,31,1,0" VerticalAlignment="Top" Width="90" Style="{DynamicResource MainButtonStyke}" Background="#FF9017AC" Foreground="White" FontWeight="Bold" BorderBrush="{x:Null}" FontFamily="Dubai" FontSize="15" IsEnabled="False"/>
 
         <Rectangle Margin="0,0,2,2" Opacity="0.565" Height="45" VerticalAlignment="Bottom">
@@ -52,17 +52,18 @@
                 <ImageBrush ImageSource="/Assets/Sprites/MenuBack.png"/>
             </Grid.Background>
             <Grid Margin="0,0,24,0">
-                <Button Cursor="Hand" x:Name="GamesBtn" Click="GamesBtn_Click" Content="🎮" HorizontalAlignment="Center" Margin="0,4,0,236" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Height="60" FontSize="30" FontFamily="Dubai" ToolTip="Games"/>
-                <Button Cursor="Hand" x:Name="ServersBtn" Click="ServersBtn_Click" Content="▤" HorizontalAlignment="Center" Margin="0,64,0,176" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Height="60" FontSize="30" FontFamily="Dubai" ToolTip="Servers"/>
-                <Button Cursor="Hand" x:Name="ModsBtn" Click="ModsBtn_Click" Content="🛠️" HorizontalAlignment="Center" Width="75" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Margin="0,124,0,116" Height="60" FontSize="30" FontFamily="Dubai" ToolTip="Mods"/>
-                <Button Cursor="Hand" x:Name="HelpBtn" Click="HelpBtn_Click" Content="？" HorizontalAlignment="Center" Margin="0,184,0,56" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Height="60" FontSize="30" FontFamily="Dubai" IsEnabled="False" ToolTip="Coming Soon"/>
+                <Button Cursor="Hand" x:Name="GamesBtn" Click="GamesBtn_Click" Content="🎮" HorizontalAlignment="Center" Margin="0,4,0,236" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Height="60" FontSize="30" FontFamily="Dubai"/>
+                <Button Cursor="Hand" x:Name="ServersBtn" Click="ServersBtn_Click" Content="▤" HorizontalAlignment="Center" Margin="0,64,0,176" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Height="60" FontSize="30" FontFamily="Dubai"/>
+                <Button Cursor="Hand" x:Name="ModsBtn" Click="ModsBtn_Click" Content="🛠️" HorizontalAlignment="Center" Width="75" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Margin="0,124,0,116" Height="60" FontSize="30" FontFamily="Dubai"/>
+                <Button Cursor="Hand" x:Name="HelpBtn" Click="HelpBtn_Click" Content="？" HorizontalAlignment="Center" Margin="0,184,0,56" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Height="60" FontSize="30" FontFamily="Dubai" IsEnabled="False"/>
                 <TextBlock x:Name="VersionNumberTxtBox" TextWrapping="Wrap" Background="{x:Null}" Foreground="White" TextAlignment="Center" HorizontalAlignment="Center" Width="70" FontFamily="Dubai" Height="20" VerticalAlignment="Bottom"/>
                 <Button Cursor="Hand" Style="{DynamicResource MainButtonStyke}" x:Name="CreditsBtn" Click="CreditsBtn_Click" Content="CREDITS" HorizontalAlignment="Center" Margin="0,0,0,20" Width="75" Background="{x:Null}" Foreground="White" BorderBrush="{x:Null}" FontFamily="Dubai" FontWeight="Bold" Height="25" VerticalAlignment="Bottom"/>
             </Grid>
         </Grid>
 
-        <Grid x:Name="GamesPage" Margin="65,0,0,10" Visibility="Visible">
-            <TextBlock HorizontalAlignment="Left" Height="41" Margin="0,-5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175" Foreground="White" FontWeight="Bold" FontSize="24" TextAlignment="Center" FontFamily="Dubai"><Run Language="en-gb" Text="GAMES"/></TextBlock>
+        <TextBlock x:Name="PageName" HorizontalAlignment="Left" Height="40" Margin="88,-4,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175" Foreground="White" FontWeight="Bold" FontSize="24"  TextAlignment="Left" FontFamily="Dubai"><Run Language="en-gb" Text="PAGE_NAME"/></TextBlock>
+
+        <Grid x:Name="GamesPage" Margin="65,0,0,10" Visibility="Hidden">
             <Grid Margin="35,65,35,35">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="134*"/>
@@ -154,7 +155,6 @@
             </Grid>
         </Grid>
         <Grid x:Name="ServersPage" Margin="65,0,10,10" Visibility="Hidden">
-            <TextBlock HorizontalAlignment="Left" Height="40" Margin="0,-5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175" Foreground="White" FontWeight="Bold" FontSize="24"  TextAlignment="Center" Visibility="Visible" FontFamily="Dubai"><Run Text="SERVER"/><Run Language="en-gb" Text="S"/></TextBlock>
             <Grid Margin="35,65,35,35">
                 <Rectangle Fill="#FF1D1D1D" Opacity="0.72" Stroke="#FF1D1D1D" />
                 <DataGrid x:Name="ServerList" MouseDoubleClick="ServerList_MouseDoubleClick" SelectedCellsChanged="ServerList_SelectedCellsChanged" FontFamily="Dubai" BorderThickness="3" Margin="0,19,0,0" BorderBrush="{x:Null}" Foreground="White" CanUserReorderColumns="False" CanUserSortColumns="True" ScrollViewer.CanContentScroll="True" RowHeight="30" ColumnHeaderHeight="30" Background="{x:Null}" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" CanUserResizeRows="False" HorizontalGridLinesBrush="White" VerticalGridLinesBrush="{x:Null}" SelectionMode="Single" RowDetailsVisibilityMode="Collapsed" FontSize="20" MinColumnWidth="148" HorizontalScrollBarVisibility="Disabled" EnableColumnVirtualization="True" Style="{DynamicResource DataGridStyle}" Focusable="False" AlternatingRowBackground="#339017AC" CanUserAddRows="False" CanUserDeleteRows="False">
@@ -267,16 +267,15 @@
                 </DataGrid>
                 <TextBox Style="{DynamicResource TextBoxStyle}" x:Name="NumberToShow" PreviewTextInput="ServerCount_PreviewTextInput" Height="26" Margin="0,4,316,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Dubai" Background="{x:Null}" Foreground="White" HorizontalAlignment="Right" Width="49" MaxLines="1" MaxLength="4" FontWeight="Bold" FontSize="15"/>
                 <TextBlock Height="19" Margin="0,6,370,0" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Right" Foreground="White" FontFamily="Dubai" HorizontalAlignment="Right" Width="85" FontWeight="Bold" FontSize="15"><Run Text="# TO SHOW"/><Run Language="en-gb" Text=":"/></TextBlock>
-                <Button Cursor="Hand" x:Name="RefreshBtn" Click="RefreshBtn_Click" Content="🔃" Height="31" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Width="31" FontWeight="Normal" FontFamily="Dubai" FontSize="15" Margin="0,4,0,0" ToolTip="Refresh"/>
+                <Button Cursor="Hand" x:Name="RefreshBtn" Click="RefreshBtn_Click" Content="🔃" Height="31" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Width="31" FontWeight="Normal" FontFamily="Dubai" FontSize="15"/>
                 <TextBlock x:Name="SelectAGameTxt" HorizontalAlignment="Center" Height="31" TextWrapping="Wrap" VerticalAlignment="Center" Width="205" TextAlignment="Center" Foreground="White" FontSize="18" FontFamily="Dubai" FontWeight="Bold" Visibility="Hidden"><Run Language="en-gb" Text="SELECT A GAME FIRST"/></TextBlock>
                 <TextBox x:Name="SearchBox" PreviewKeyUp="SearchBox_PreviewKeyUp" Height="26" Margin="0,4,68,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Dubai" Background="{x:Null}" Foreground="White" HorizontalAlignment="Right" Width="164" MaxLines="1" MinLines="1" FontWeight="Bold" Style="{DynamicResource TextBoxStyle}"/>
                 <TextBlock Height="19" Margin="0,6,237,0" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Right" Foreground="White" FontFamily="Dubai" HorizontalAlignment="Right" Width="61" FontWeight="Bold" FontSize="15"><Run Text="SEARCH"/><Run Language="en-gb" Text=":"/></TextBlock>
                 <TextBlock x:Name="Counter" TextWrapping="Wrap" Height="23" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="284" Margin="0,0,0,-23" Foreground="#FF636363" TextAlignment="Right"><Run Language="en-gb" Text=""/></TextBlock>
-                <Button Cursor="Hand" x:Name="FilterBtn" Click="FilterBtn_Click" Content="🔎" Height="31" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Width="31" FontWeight="Normal" FontFamily="Dubai" FontSize="15" Margin="0,4,32,0" ToolTip="Filter"/>
+                <Button Cursor="Hand" x:Name="FilterBtn" Click="FilterBtn_Click" Content="🔎" Height="31" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Width="31" FontWeight="Normal" FontFamily="Dubai" FontSize="15" Margin="0,0,32,0"/>
             </Grid>
         </Grid>
         <Grid x:Name="ModsPage" Margin="65,0,10,10" Visibility="Hidden">
-            <TextBlock HorizontalAlignment="Left" Height="40" Margin="0,-5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175" Foreground="White" FontWeight="Bold" FontSize="24"  TextAlignment="Center" FontFamily="Dubai"><Run Language="en-gb" Text="MODS"/></TextBlock>
             <Grid Margin="35,65,35,35">
                 <Rectangle Stroke="#FF1D1D1D" Fill="#FF1D1D1D" Opacity="0.72" />
                 <DataGrid x:Name="ModList" SelectedCellsChanged="ServerList_SelectedCellsChanged" FontFamily="Dubai" BorderThickness="3" Margin="0,19,0,0" BorderBrush="{x:Null}" Foreground="White" CanUserReorderColumns="False" CanUserSortColumns="True" ScrollViewer.CanContentScroll="True" RowHeight="30" ColumnHeaderHeight="30" Background="{x:Null}" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" CanUserResizeRows="False" HorizontalGridLinesBrush="White" VerticalGridLinesBrush="{x:Null}" SelectionMode="Single" RowDetailsVisibilityMode="Collapsed" FontSize="20" MinColumnWidth="148" HorizontalScrollBarVisibility="Disabled" EnableColumnVirtualization="True" Style="{DynamicResource DataGridStyle}" Focusable="False" AlternatingRowBackground="#339017AC" CanUserAddRows="False" CanUserDeleteRows="False">
@@ -353,19 +352,16 @@
             </Grid>
         </Grid>
         <Grid x:Name="HelpPage" Margin="65,0,10,10" Visibility="Hidden">
-            <TextBlock HorizontalAlignment="Left" Height="40" Margin="0,-5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175" Foreground="White" FontWeight="Bold" FontSize="24"  TextAlignment="Center" FontFamily="Dubai"><Run Language="en-gb" Text="HELP"/></TextBlock>
             <Grid Margin="35,65,35,35">
                 <Rectangle Stroke="#FF1D1D1D" Fill="#FF1D1D1D" Opacity="0.72" />
             </Grid>
         </Grid>
         <Grid x:Name="SettingsPage" Margin="65,0,10,10" Visibility="Hidden">
-            <TextBlock HorizontalAlignment="Left" Height="40" Margin="0,-5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175" Foreground="White" FontWeight="Bold" FontSize="24"  TextAlignment="Center" FontFamily="Dubai"><Run Language="en-gb" Text="SETTINGS"/></TextBlock>
             <Grid Margin="35,65,35,35">
                 <Rectangle Stroke="#FF1D1D1D" Fill="#FF1D1D1D" Opacity="0.72" />
             </Grid>
         </Grid>
         <Grid x:Name="CreditsPage" Margin="65,0,10,10" Visibility="Hidden">
-            <TextBlock HorizontalAlignment="Left" Height="40" Margin="0,-5,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175" Foreground="White" FontWeight="Bold" FontSize="24"  TextAlignment="Center" FontFamily="Dubai"><Run Language="en-gb" Text="CREDITS"/></TextBlock>
             <Grid Margin="35,65,35,35">
                 <Rectangle Stroke="#FF1D1D1D" Fill="#FF1D1D1D" Opacity="0.72" />
                 <TextBlock HorizontalAlignment="Center" Height="35" TextWrapping="Wrap" VerticalAlignment="Top" Width="320" FontFamily="Dubai" Foreground="#FF9017AC" FontWeight="Bold" FontSize="20" TextAlignment="Center"><Run Language="en-gb" Text="THANKS FOR USING LIFTOFF!"/></TextBlock>
@@ -375,12 +371,26 @@
                 <Button Cursor="Hand" Style="{DynamicResource MainButtonStyke}" x:Name="PublicZeusBtn" Click="PublicZeusBtn_Click" Content="PUBLIC ZEUS" Margin="173,240,172,0" Background="{x:Null}" Foreground="White" BorderBrush="#FF8A8A8A" FontFamily="Dubai" FontWeight="Bold" FontSize="16" Height="36" VerticalAlignment="Top"/>
             </Grid>
         </Grid>
+        <Grid x:Name="IntroPage" Margin="65,0,10,10" Visibility="Visible">
+            <Grid Margin="35,65,35,35">
+                <Rectangle Stroke="#FF1D1D1D" Fill="#FF1D1D1D" Opacity="0.72" />
+                <TextBlock HorizontalAlignment="Left" Height="44" Margin="10,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="318" FontWeight="Bold" FontFamily="Dubai" FontSize="24" Foreground="#FFAC1DCC"><Run Text="AND WE HAVE LIFTOFF!"/><Run Language="en-gb" Text=" 🚀"/></TextBlock>
+                <TextBlock Margin="10,62,10,10" TextWrapping="Wrap" Foreground="White" FontFamily="Dubai" FontSize="15"><Run Text="Welcome to "/><Run Text="LIFTOFF"/><Run Language="en-gb" Text=", an all-in-one Steam game launcher! "/><LineBreak/><Run Language="en-gb"/><LineBreak/><Run Language="en-gb" Text="Here you can join servers for some of you favourite Steam games, simply add the game you want, select a server and hit the play button up the top right."/><LineBreak/><Run Language="en-gb"/><LineBreak/><Run Language="en-gb" Text="If you would like to support LIFTOFF's development or want to find out more you can head to LIFTOFF.PublicZeus.com."/></TextBlock>
+                <Button Cursor="Hand" x:Name="IntroDone" Content="OKAY THANKS ▶" Click="IntroDone_Click" Margin="0,0,10,10" Style="{DynamicResource MainButtonStyke}" Background="#FF9017AC" Foreground="White" FontWeight="Bold" BorderBrush="{x:Null}" FontFamily="Dubai" FontSize="15" Height="36" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="131"/>
+
+            </Grid>
+        </Grid>
+        <Grid x:Name="PAGE_TEMPLATE" Margin="65,0,10,10" Visibility="Hidden">
+            <Grid Margin="35,65,35,35">
+                <Rectangle Stroke="#FF1D1D1D" Fill="#FF1D1D1D" Opacity="0.72" />
+            </Grid>
+        </Grid>
 
         <Button Cursor="Hand" x:Name="CloseBtn" Content="🞩" Click="CloseBtn_Click" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Width="40" FontWeight="Normal" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" FontSize="17" Style="{DynamicResource MainButtonStyke}" FontFamily="Dubai" Focusable="False"/>
         <Button Cursor="Hand" x:Name="MinBtn" Content="⎼⎼" Click="MinBtn_Click" HorizontalAlignment="Right" Width="40" FontWeight="Normal" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,81,0" Height="30" VerticalAlignment="Top" FontSize="17" Style="{DynamicResource MainButtonStyke}" Focusable="False"/>
         <Button Cursor="Hand" x:Name="MaxBtn" Content="◻" Click="MaxBtn_Click" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Width="40" FontWeight="Normal" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,41,0" FontSize="17" Style="{DynamicResource MainButtonStyke}" Focusable="False"/>
-        <Button Cursor="Hand" x:Name="FullscreenBtn" Content="⛗" Click="FullscreenBtn_Click" HorizontalAlignment="Right" Width="33" FontWeight="Normal" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,121,0" Height="32" VerticalAlignment="Top" Style="{DynamicResource MainButtonStyke}" Focusable="False" FontFamily="Dubai" FontSize="14" ToolTip="Fullscreen"/>
-        <Button Cursor="Hand" x:Name="SettingsBtn" Content="⚙️" Click="SettingsBtn_Click" HorizontalAlignment="Right" Width="33" FontWeight="Normal" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,154,0" Height="32" VerticalAlignment="Top" Style="{DynamicResource MainButtonStyke}" FontFamily="Dubai" ToolTip="Coming Soon"/>
+        <Button Cursor="Hand" x:Name="FullscreenBtn" Content="⛗" Click="FullscreenBtn_Click" HorizontalAlignment="Right" Width="33" FontWeight="Normal" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,121,0" Height="32" VerticalAlignment="Top" Style="{DynamicResource MainButtonStyke}" Focusable="False" FontFamily="Dubai" FontSize="14"/>
+        <Button Cursor="Hand" x:Name="SettingsBtn" Content="⚙️" Click="SettingsBtn_Click" HorizontalAlignment="Right" Width="33" FontWeight="Normal" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,154,0" Height="32" VerticalAlignment="Top" Style="{DynamicResource MainButtonStyke}" FontFamily="Dubai" IsEnabled="False"/>
 
         <Grid x:Name="Busy" Cursor="AppStarting" Visibility="Hidden" Margin="0,2,0,0" ForceCursor="True">
             <Rectangle x:Name="BusyBG" Stroke="Black" Fill="#CA000000" Margin="-2,-4,2,2"/>
