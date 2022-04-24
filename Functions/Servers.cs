@@ -19,6 +19,7 @@ namespace LIFTOFF.Functions
         public SteamServer Info { get; set; }
         public bool Modded  { get; set; }
         public bool Featured { get; set; }
+        public string FeaturedBanner { get; set; }
         public List<Mod> Mods { get; set; }
         public Game Game { get; set; }
     }
@@ -29,6 +30,8 @@ namespace LIFTOFF.Functions
         public string Name { get; set; }
         public string Author { get; set; }
         public string Status { get; set; }
+        public Server Server { get; set; }
+        public Game Game { set; get; }
     }
     
     public class SteamServer
@@ -67,7 +70,7 @@ namespace LIFTOFF.Functions
                 ServicePointManager.Expect100Continue = false;
                 Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Sending request to API...");
                 HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create("https://liftoff.publiczeus.com/api/ServerList?appID=" + Variables.CurrentGame.AppID);
-                request.Timeout = 10000;
+                request.Timeout = 30000;
                 request.Proxy = null;
                 request.AutomaticDecompression = DecompressionMethods.GZip;
 
@@ -98,7 +101,7 @@ namespace LIFTOFF.Functions
 
                     using (var client = new WebClient())
                     {
-                        var content = client.DownloadData("https://liftoff.publiczeus.com/featured.txt");
+                        var content = client.DownloadData("https://liftoff.publiczeus.com/app/featured.txt");
                         using (var stream = new MemoryStream(content))
                         {
                             StreamReader sr = new StreamReader(stream);

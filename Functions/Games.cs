@@ -88,13 +88,16 @@ namespace LIFTOFF.Functions
 
     class Games
     {
+
         public static async Task<ImageBrush> ImgBrushFromURL(string URL = null)
         {
             ImageBrush ImgBrush = new ImageBrush();
             if (URL != "")
             {
                 Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Getting image from url (" + URL + ")");
+
                 WebRequest ImgRequest = WebRequest.Create(URL);
+
                 WebResponse ImgResponse = ImgRequest.GetResponse();
 
                 Stream ImgStream = ImgResponse.GetResponseStream();

@@ -32,8 +32,8 @@ namespace LIFTOFF.Functions
                 if (System.IO.File.Exists(pathToExe)) System.IO.File.Delete(pathToExe);
                 System.IO.File.Copy(System.Windows.Forms.Application.ExecutablePath, pathToExe);
 
-                await DownloadFile(Variables.HomeDir + "\\ROCKET.exe", "https://liftoff.publiczeus.com/ROCKET.exe", preloader);
-                await DownloadFile(Variables.HomeDir + "\\steam_api64.dll", "https://liftoff.publiczeus.com/steam_api64.dll", preloader);
+                await DownloadFile(Variables.HomeDir + "\\ROCKET.exe", "https://liftoff.publiczeus.com/app/ROCKET.exe", preloader);
+                await DownloadFile(Variables.HomeDir + "\\steam_api64.dll", "https://liftoff.publiczeus.com/app/steam_api64.dll", preloader);
 
             
                 string commonStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu);

@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.Net;
 
 namespace LIFTOFF
 {
@@ -16,6 +17,33 @@ namespace LIFTOFF
         public static bool GameRunning = false;
 
         public static string AppVersion = "";
+
+        private static int currentMessage = 1;
+        public static async Task<string> MOTD(bool displayFull = false)
+        {
+            string motd = "";
+            using (var client = new WebClient())
+            {
+                var content = client.DownloadData("https://liftoff.publiczeus.com/app/motd.txt");
+                using (var stream = new MemoryStream(content))
+                {
+                    StreamReader sr = new StreamReader(stream);
+                    motd = sr.ReadToEnd().ToUpper();
+                }
+            }
+
+            if (!displayFull)
+            {
+                string[] messages = motd.Split(";", StringSplitOptions.TrimEntries);
+                string messageToSend = messages[currentMessage-1];
+
+                if (currentMessage == messages.Length) currentMessage = 1;
+                else currentMessage++;
+                return messageToSend;
+            }
+            else return motd;
+            
+        }
 
         public static ObservableCollection<Functions.Server> ServerList = null;
 

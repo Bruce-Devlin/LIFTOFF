@@ -15,6 +15,8 @@ using Microsoft.Win32;
 using System.IO;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Windows.Media.Animation;
+using System.Windows.Input;
 
 namespace LIFTOFF.Windows
 {
@@ -143,6 +145,7 @@ namespace LIFTOFF.Windows
             CreditsPage.Visibility = Visibility.Hidden;
             IntroPage.Visibility = Visibility.Hidden;
             PAGE_TEMPLATE.Visibility = Visibility.Hidden;
+            ServersPage.Visibility = Visibility.Hidden;
         }
         #endregion
 
@@ -211,7 +214,7 @@ namespace LIFTOFF.Windows
                     IsSecondClick = true;
                     clickedTime = DateTime.Now;
                 }
-                DragMove();
+                if (Mouse.LeftButton == MouseButtonState.Pressed) DragMove();
             }
         }
         private void MenuHeader_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -457,11 +460,24 @@ namespace LIFTOFF.Windows
                 else ShowGamesPage();
             }
         }
-
+        DoubleAnimation doubleAnimation = new DoubleAnimation();
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
+            MOTDTxt.Text = await Variables.MOTD();
+            doubleAnimation.From = -MOTDTxt.ActualWidth;
+            doubleAnimation.To = canMain.ActualWidth;
+            doubleAnimation.Duration = new Duration(TimeSpan.Parse("0:0:12"));
+            doubleAnimation.Completed += new EventHandler(MOTD_Completed);
+            MOTDTxt.BeginAnimation(Canvas.LeftProperty, doubleAnimation);
         }
+        private async void MOTD_Completed(object sender, EventArgs e)
+        {
+            MOTDTxt.Text = MOTDTxt.Text = await Variables.MOTD();
+            doubleAnimation.From = -MOTDTxt.ActualWidth;
+            doubleAnimation.To = canMain.ActualWidth;
+            MOTDTxt.BeginAnimation(Canvas.LeftProperty, doubleAnimation);
+        }
+
         #endregion
 
         #region Games Page
@@ -778,12 +794,54 @@ namespace LIFTOFF.Windows
 
         }
 
-        private void ServerList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void ServerList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (ServerList.SelectedItem != null)
             {
-                MessageBox.Show("Info for server: " + (ServerList.SelectedItem as Functions.Server).Info.name);
+                var serverItem = ServerList.SelectedItem;
+
+                if ((serverItem as DataGridRow) != null)
+                {
+                    await ShowServerPage((ServerList.SelectedItem as DataGridRow).Item as Functions.Server);
+                }
+                else
+                {
+                    await ShowServerPage(ServerList.SelectedItem as Functions.Server);
+                }
             }
+        }
+
+        private async Task ShowServerPage(Functions.Server Server)
+        {
+            ServerPage.Visibility = Visibility.Visible;
+            string serverTitle = Server.Info.name.ToUpper() + " | Players: " + Server.Info.players + "/" + Server.Info.max_players;;
+
+
+            if (Server.Featured)
+            {
+                serverTitle.Insert(0, "❤️ ");
+            }
+            else
+            {
+
+            }
+
+            ServerNameTxt.Text = serverTitle;
+
+            string bannerURL = Server.FeaturedBanner;
+            if (bannerURL == null)
+            {
+                bannerURL = "https://www.liftoff.publiczeus.com/app/ServerBanner.png";
+            }
+
+            ImageBrush brush = await Functions.Games.ImgBrushFromURL(bannerURL);
+            ImageSource sourse = brush.ImageSource;
+            ServerBanner.Source = sourse;
+        }
+
+        private void CloseServerBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ServerPage.Visibility = Visibility.Hidden;
         }
 
         private void ServerList_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)

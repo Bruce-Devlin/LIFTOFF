@@ -60,26 +60,28 @@ namespace LIFTOFF.Windows
             this.MouseLeftButtonDown += delegate { DragMove(); }; //Draggy windows
 
             if (App.StartupArgs.Length != 0) ArgHandler();
+        }
 
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
             Variables.AppVersion = "V. " + Assembly.GetEntryAssembly().GetName().Version.ToString();
 
             Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: --- Application Details ---");
             Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Home Directory: " + Variables.HomeDir);
             Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Config Directory: " + Variables.ConfigDir);
             Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Application Version: " + Variables.AppVersion);
+            Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Message of the day: " + await Variables.MOTD(true));
             Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: ---------------------------");
 
-            Status("Lifting off...");
-        }
-
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
-        {
             PreloadManager();
         }
 
 
         public async Task PreloadManager()
         {
+
+            await Status("Lifting off...");
+
             if (!CMDArgs.Contains(new Tuple<string, string>("installed", "true")))
             {
                 await CheckInternetConnection();
