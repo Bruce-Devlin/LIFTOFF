@@ -1,4 +1,4 @@
-[![C#](https://img.shields.io/badge/-C%23-green)](https://docs.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/)
+[![C#](https://img.shields.io/badge/C%23-9.0-green)](https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-9) [![C#](https://img.shields.io/badge/.NET-5.0-orange)](https://dotnet.microsoft.com/en-us/download/dotnet/5.0)
 # LIFTOFF
 An all-in-one Steam game launcher!
 
