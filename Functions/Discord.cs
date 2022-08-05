@@ -45,15 +45,15 @@ namespace LIFTOFF.Functions
 
             client.OnReady += (sender, e) =>
             {
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: RPC Ready from user {0} ({1})", e.User.Username, e.User.ID);
+                Core.Log("RPC Ready from user " + e.User.Username + " (" + e.User.ID + ")");
             };
             client.OnPresenceUpdate += (sender, e) =>
             {
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Presence Updated!", e.Name);
+                Core.Log("Presence Updated!");
             };
             client.OnConnectionFailed += (sender, e) =>
             {
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Unable to Connect to Discord!");
+                Core.Log("Unable to Connect to Discord!");
 
             };
 
@@ -110,10 +110,10 @@ namespace LIFTOFF.Functions
         /// </summary>
         public async Task Deinitialize()
         {
-            Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Closing Discord connection...");
+            await Core.Log("Closing Discord connection...");
             client.ClearPresence();
             client.Dispose();
-            Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Discord connection closed.");
+            await Core.Log("Discord connection closed.");
         }
     }
 }

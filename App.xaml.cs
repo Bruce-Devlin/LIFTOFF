@@ -25,9 +25,8 @@ namespace LIFTOFF
             if (!ExThrown)
             {
                 ExThrown = true;
-                Console.WriteLine("Exception Handled! (CRITICAL = " + critical +") ");
-                Console.WriteLine(e.ToString());
-                Console.WriteLine("-------------------------------------------------");
+                Functions.Core.Log("Exception Handled! (CRITICAL = " + critical + ")", true);
+                Functions.Core.Log("Exception = Message: " + e.ToString() + " StackTrace:" + e.StackTrace.ToString(), true);
 
                 if (critical)
                 {
@@ -41,9 +40,9 @@ namespace LIFTOFF
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error copying to clipboard!");
+                    Functions.Core.Log("Error copying to clipboard!");
                     Console.WriteLine(ex.ToString());
-                    Console.WriteLine("THE APPLICATION IS UNABLE TO CONTINUE.");
+                    Functions.Core.Log("THE APPLICATION IS UNABLE TO CONTINUE.");
                     Console.ReadLine();
                 }
             }

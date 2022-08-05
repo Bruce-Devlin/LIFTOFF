@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,13 +16,66 @@ namespace LIFTOFF.Functions
     public class Server
     {
         public string TotalPlayers { get; set; }
-        public string IpandPort() { return Info.addr + ":" + Info.gameport; }
+        public string IPandPort() { return Info.addr + ":" + Info.gameport; }
+        public string Title
+        {
+            get
+            {
+                string title = Info.name;
+                if (Featured)
+                {
+                    title = "❤️ " + title;
+                }
+                return title;
+            }
+        }
         public SteamServer Info { get; set; }
+        public bool Favorited
+        {
+            get 
+            {
+                if (Core.getVariable("IPandPort") != "") return true;
+                else return false;   
+            }
+        }
         public bool Modded  { get; set; }
         public bool Featured { get; set; }
         public string FeaturedBanner { get; set; }
         public List<Mod> Mods { get; set; }
         public Game Game { get; set; }
+        public string Ping
+        { 
+            get
+            {
+                if (tmpPing == null)
+                {
+                    try
+                    {
+                        Ping pinger = null;
+                        pinger = new Ping();
+
+                        string ping = "-";
+
+                        PingReply reply = pinger.Send(Info.addr);
+                        ping = reply.RoundtripTime.ToString();
+
+
+                        Core.Log("Ping for server \"" + Info.addr + "\" is: " + ping);
+                        pinger.Dispose();
+                        tmpPing = ping;
+                        return ping;
+                    }
+                    catch (PingException ex)
+                    {
+                        Core.Log("PING FAILED!");
+                        Core.Log(ex.ToString());
+                        return "-";
+                    }
+                }
+                else return tmpPing.ToString();
+            }
+        }
+        private string tmpPing { get; set; }
     }
 
     public class Mod
@@ -56,19 +110,21 @@ namespace LIFTOFF.Functions
     }
     internal class Servers
     {
+        public static bool Pinging = false;
         public static async Task<ObservableCollection<Server>> GetServers(int count, Windows.Home homeWin, string search = "")
         {
             ObservableCollection<Server> ServerList = new ObservableCollection<Server>();
+
             try
             {
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Getting servers from Steam for app: " + Variables.CurrentGame.AppID);
+                await Core.Log("Getting servers from Steam for app: " + Variables.CurrentGame.AppID);
                 System.Diagnostics.Stopwatch requestTime = System.Diagnostics.Stopwatch.StartNew();
 
                 JObject result;
                 
                 ServicePointManager.DefaultConnectionLimit = 4;
                 ServicePointManager.Expect100Continue = false;
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Sending request to API...");
+                await Core.Log("Sending request to API...");
                 HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create("https://liftoff.publiczeus.com/api/ServerList?appID=" + Variables.CurrentGame.AppID);
                 request.Timeout = 30000;
                 request.Proxy = null;
@@ -78,22 +134,22 @@ namespace LIFTOFF.Functions
                 using (Stream stream = response.GetResponseStream())
                 using (StreamReader reader = new StreamReader(stream))
                 {
-                    Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Got response from API!");
+                    await Core.Log("Got response from API!");
 
-                    Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Reading Stream from API...");
+                    await Core.Log("Reading Stream from API...");
                     result = JObject.Parse(await reader.ReadToEndAsync());
                     reader.Close();
                     stream.Close();
                     response.Close();
 
                     requestTime.Stop();
-                    Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Done reading from Stream. (" + requestTime.ElapsedMilliseconds + "ms)");
+                    await Core.Log("Done reading from Stream. (" + requestTime.ElapsedMilliseconds + "ms)");
                 }
 
                 System.Diagnostics.Stopwatch compileTime = System.Diagnostics.Stopwatch.StartNew();
                 if (int.Parse(result["code"].ToString()) != 400)
                 {
-                    Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Compiling response from API...");
+                    await Core.Log("Compiling response from API...");
 
                     int servers = 0;
                     int totalPlayers = 0;
@@ -101,14 +157,16 @@ namespace LIFTOFF.Functions
 
                     using (var client = new WebClient())
                     {
-                        var content = client.DownloadData("https://liftoff.publiczeus.com/app/featured.txt");
+                        var content = client.DownloadData("https://liftoff.publiczeus.com/app/FeaturedServers.txt");
                         using (var stream = new MemoryStream(content))
                         {
                             StreamReader sr = new StreamReader(stream);
                             featuredIPs = sr.ReadToEnd().Split(",");
                         }
+                        client.Dispose();
                     }
 
+                    
                     foreach (JObject server in result["data"])
                     {
                         if (servers != count)
@@ -122,6 +180,7 @@ namespace LIFTOFF.Functions
 
                                 var ipWithoutPort = newSteamServer.addr.Split(':');
                                 newSteamServer.addr = ipWithoutPort[0];
+
 
                                 newServer.Info = newSteamServer;
                                 newServer.Game = Variables.CurrentGame;
@@ -141,27 +200,31 @@ namespace LIFTOFF.Functions
                                 if (featuredIPs.Contains(newSteamServer.addr + ":" + newSteamServer.gameport))
                                 {
                                     newServer.Featured = true;
+                                    ServerList.Insert(0, newServer);
                                 }
-                                else newServer.Featured = false;
-
-                                ServerList.Add(newServer);
+                                else
+                                {
+                                    newServer.Featured = false;
+                                    ServerList.Add(newServer);
+                                }
                                 servers++;
                             }
                         }
                         else break;
                     };
+
                     compileTime.Stop();
                     homeWin.Counter.Text = totalPlayers.ToString("N0") + " PLAYERS | " + servers.ToString("N0") + " SERVERS";
 
-                    Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Got " + servers + " servers! (response-time: " + requestTime.ElapsedMilliseconds +"ms | compile-time: " + compileTime.ElapsedMilliseconds + "ms)");
-                    Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Total players found: " + totalPlayers);
+                    await Core.Log("Got " + servers + " servers! (response-time: " + requestTime.ElapsedMilliseconds +"ms | compile-time: " + compileTime.ElapsedMilliseconds + "ms)");
+                    await Core.Log("Total players found: " + totalPlayers);
                 }
                 else MessageBox.Show("Uh-oh!? It looks like I cant connect to steam servers... Maybe Steam is down right now? or maybe check you are connected to the internet and restart me.");
             }
             catch (Exception Ex)
             {
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Error getting servers from Steam!");
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: " + Ex.ToString());
+                await Core.Log("Error getting servers from Steam!");
+                await Core.Log("" + Ex.ToString());
             }
             return ServerList;
         }

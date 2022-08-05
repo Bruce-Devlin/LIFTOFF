@@ -1,4 +1,6 @@
 ﻿using DiscordRPC;
+using Gameloop.Vdf;
+using Gameloop.Vdf.Linq;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -24,26 +26,42 @@ namespace LIFTOFF.Functions
 
         //"{GameIcon},{GameTitle},{AppID},{ImgURL},{LinkURL},{Filename},{ServerFilename},{PlainName},{ServerAppID}"
         public string GameIcon { get; set; }
-        public string Title { get; set; }
+        public string Title 
+        { 
+            get
+            {
+                string title = OGTitle;
+                if (Featured)
+                {
+                    title = "❤️ " + title;
+                }
+                return title;
+            }
+            set
+            {
+                OGTitle = value;
+            }
+        }
+        private string OGTitle { get; set; }
         public uint AppID { get; set; }
-
+        public bool Featured { get; set; }
         public ImageSource Banner
         {
             get
             {
+                Core.Log("Getting banner Image...");
                 ImageBrush bannerImg;
                 if (cachedBanner == null)
                 {
-                    try
+                    bannerImg = Games.ImgBrushFromURL(BannerURL).Result;
+                    cachedBanner = bannerImg;
+
+                    if (bannerImg == null)
                     {
-                        bannerImg = Games.ImgBrushFromURL(BannerURL).Result;
-                        cachedBanner = bannerImg;
+                        Core.Log("Can't get custom banner! Using default instead.");
+                        bannerImg = Games.ImgBrushFromURL(DefaultBannerURL).Result; //Should be ("DefaultBannerURL").Result
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Error Getting Banner!");
-                        bannerImg = Games.ImgBrushFromURL(DefaultBannerURL).Result;
-                    }
+                    else Core.Log("Got cached banner.");
                 }
                 else
                 {
@@ -79,38 +97,84 @@ namespace LIFTOFF.Functions
             }
         } 
         public string LinkURL { get; set; }
-        public string FileLocation { get; set; }
-        public string ServerFilename { get; set; }
+        public List<string> FileLocations { get; set; }
+        public string Filename { get; set; }
+        private string ServerFilename { get; set; }
         public string Plainname { get; set; }
         public string AdditionalArguments { get; set; }
-        public uint ServerAppID { get; set; }
+        private uint ServerAppID { get; set; }
+    }
+
+    public class SteamLibrary
+    {
+        public int id { get; set; }
     }
 
     class Games
     {
+        public static async Task<bool> IsGameInstalled(ulong appID)
+        {
+            bool r = File.ReadAllText("C:\\Program Files (x86)\\Steam\\steamapps\\libraryfolders.vdf").Contains(appID.ToString());
+            return r;
+        }
 
         public static async Task<ImageBrush> ImgBrushFromURL(string URL = null)
         {
-            ImageBrush ImgBrush = new ImageBrush();
-            if (URL != "")
+            if (URL != null)
             {
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Getting image from url (" + URL + ")");
+                ImageBrush ImgBrush = new ImageBrush();
 
-                WebRequest ImgRequest = WebRequest.Create(URL);
+                await Core.Log("Getting image from url (" + URL + ")");
 
-                WebResponse ImgResponse = ImgRequest.GetResponse();
+                UriBuilder uriBuilder = new UriBuilder(URL);
+                HttpWebRequest ImgRequest = null;
+                HttpWebResponse ImgResponse = null;
+                try
+                {
+                    await Core.Log("Sending HTTP request...");
+                    ImgRequest = HttpWebRequest.CreateHttp(uriBuilder.Uri);
 
-                Stream ImgStream = ImgResponse.GetResponseStream();
+                    await Core.Log("Getting HTTP response...");
+                    ImgResponse = (HttpWebResponse)ImgRequest.GetResponse();
+                    BitmapImage ImgBitmap = new BitmapImage();
 
-                BitmapImage ImgBitmap = new BitmapImage();
-                ImgBitmap.BeginInit();
-                ImgBitmap.StreamSource = ImgStream;
-                ImgBitmap.EndInit();
+                    await Core.Log("HTTP Status: " + ImgResponse.StatusCode.ToString());
+                    if (ImgResponse.StatusCode == HttpStatusCode.OK)
+                    {
+                        Stream ImgStream = ImgResponse.GetResponseStream();
 
 
-                ImgBrush.ImageSource = ImgBitmap;
+                        ImgBitmap.BeginInit();
+                        ImgBitmap.StreamSource = ImgStream;
+                        ImgBitmap.EndInit();
+                    }
+                    else if (ImgResponse.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        if (ImgRequest != null) ImgRequest.Abort();
+                        if (ImgResponse != null)
+                        {
+                            ImgResponse.Close();
+                            ImgResponse.Dispose();
+                        }
+                        return null;
+                    }
+
+                    ImgBrush.ImageSource = ImgBitmap;
+                }
+                catch
+                {
+                    await Core.Log("Failed to get banner :/", true);
+                    if (ImgRequest != null) ImgRequest.Abort();
+                    if (ImgResponse != null)
+                    {
+                        ImgResponse.Close();
+                        ImgResponse.Dispose();
+                    }
+                }
+                
+                return ImgBrush;
             }
-            return ImgBrush;
+            else return null;
         }
 
         public static async Task<bool> IsGameRunning()
@@ -122,7 +186,7 @@ namespace LIFTOFF.Functions
 
         public static async Task AddGame(Functions.Game game)
         {
-            Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Adding Game... (" + game.Title + " - " + game.AppID + ")");
+            await Core.Log("Adding Game... (" + game.Title + " - " + game.AppID + ")");
             Game pg = new Game();
             Random r = new Random();
 
@@ -131,9 +195,10 @@ namespace LIFTOFF.Functions
             pg.AppID = game.AppID;
            
             pg.BannerURL = game.BannerURL;
-            pg.FileLocation = game.FileLocation;
+            //pg.FileLocation = game.FileLocation;
+            //pg.Filename = Path.GetFileName(pg.FileLocation);
             pg.LinkURL = null;
-            pg.Plainname = game.FileLocation;
+            //pg.Plainname = game.FileLocation;
             pg.AdditionalArguments = game.AdditionalArguments;
 
             Variables.GameList.Add(pg);
@@ -148,7 +213,7 @@ namespace LIFTOFF.Functions
                 Process rocket = new Process();
 
                 rocket.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\ROCKET.exe";
-                rocket.StartInfo.Arguments = "#join " + currServer.IpandPort() + " " + currServer.Game.AppID + " " + Path.GetFileName(currServer.Game.FileLocation + " " + Variables.CurrentGame.AdditionalArguments);
+                rocket.StartInfo.Arguments = "#join " + currServer.IPandPort() + " " + currServer.Game.AppID + " " + currServer.Game.Filename + " " + Variables.CurrentGame.AdditionalArguments;
 
                 if (!Windows.Preloader.debug)
                 {
@@ -159,33 +224,33 @@ namespace LIFTOFF.Functions
                     rocket.StartInfo.CreateNoWindow = true;
                 }
                 
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Starting NamedPipe Server...");
+                await Core.Log("Starting NamedPipe Server...");
                 NamedPipeServerStream server = new NamedPipeServerStream("LIFTOFF");
 
                 await Task.Delay(4000);
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Starting ROCKET...");
+                await Core.Log("Starting ROCKET...");
                 rocket.Start();
 
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Waiting for message from ROCKET...");
+                await Core.Log("Waiting for message from ROCKET...");
                 server.WaitForConnection();
 
                 StreamReader reader = new StreamReader(server);
 
                 string response = reader.ReadLine();
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Got response from ROCKET (" + response + ")");
+                await Core.Log("Got response from ROCKET (" + response + ")");
                 if (!bool.Parse(response.Split(",")[0]))
                 {
                     string ex = response.Split(",")[1];
-                    Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Error launching game - " + ex);
+                    await Core.Log("Error launching game - " + ex);
                     MessageBox.Show("ERROR LAUNCHING GAME!" + Environment.NewLine +  ex);
                 }
                 else
                 {
-                    Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Game launched!");
+                    await Core.Log("Game launched!");
                 }
 
                 await rocket.WaitForExitAsync();
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Game closed.");
+                await Core.Log("Game closed.");
                 Variables.GameRunning = false;
             }
             catch (Exception Ex)
@@ -204,7 +269,13 @@ namespace LIFTOFF.Functions
 
                 string json = File.ReadAllText(Variables.ConfigDir + @"\mygames.json");
                 if (json != "") pgList = JsonConvert.DeserializeObject<List<Game>>(json);
-                Variables.GameList = pgList;
+                foreach (Game game in pgList)
+                {
+                    if (!Variables.GameList.Any(featGame => featGame.AppID == game.AppID))
+                    {
+                        Variables.GameList.Add(game);
+                    }
+                }
             }
         }
 
@@ -215,6 +286,54 @@ namespace LIFTOFF.Functions
             foreach (Game g in Variables.GameList) pgList.Add(g);
 
             File.WriteAllText(Variables.ConfigDir + @"\mygames.json", JsonConvert.SerializeObject(pgList, Formatting.Indented));
+        }
+
+        public static async Task GetSteamGames()
+        {
+            await Core.Log("Getting Steam Games");
+
+            string SteamLibsFile = File.ReadAllText("C:\\Program Files (x86)\\Steam\\steamapps\\libraryfolders.vdf");
+            VToken steamLib = VdfConvert.Deserialize(SteamLibsFile).Value;
+
+            foreach (VProperty steamLibrary in steamLib)
+            {
+                int libraryID = 0;
+                bool canConvert = int.TryParse(steamLibrary.Key, out libraryID);
+                if (canConvert == true)
+                {
+                    await Core.Log("Found Steam Library (" + steamLibrary.Value["path"] + ")");
+                    foreach (VProperty appid in steamLibrary.Value["apps"])
+                    {
+                        //Ignore official Steam Apps
+                        if (appid.Key != "228980")
+                        {
+                            await Core.Log("Adding game " + appid.Key);
+                            VProperty steamGameInfo = VdfConvert.Deserialize(File.ReadAllText(steamLibrary.Value["path"] + "\\steamapps\\appmanifest_" + appid.Key + ".acf"));
+
+                            Game pg = new Game();
+                            pg.FileLocations = new List<string>();
+
+                            pg.GameIcon = null;
+                            pg.Title = steamGameInfo.Value["name"].Value<string>();
+                            pg.AppID = uint.Parse(appid.Key.Replace("\"", ""));
+
+                            pg.BannerURL = "";
+
+                            string[] executables = Directory.GetFiles(steamLibrary.Value["path"] + "\\steamapps\\common\\" + steamGameInfo.Value["installdir"], "*.EXE");
+                            foreach (string exe in executables) pg.FileLocations.Add(exe);
+
+                            pg.Filename = null;
+                            pg.LinkURL = null;
+                            pg.AdditionalArguments = "";
+
+                            if (!Variables.GameList.Any(featGame => featGame.AppID == pg.AppID))
+                            {
+                                Variables.GameList.Add(pg);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

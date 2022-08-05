@@ -17,6 +17,8 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows.Media.Animation;
 using System.Windows.Input;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace LIFTOFF.Windows
 {
@@ -34,17 +36,17 @@ namespace LIFTOFF.Windows
         /// <param name="e"></param>
         private async void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Closing LIFTOFF...");
-            if (!Maximized && !Fullscreen) Functions.Config.storeVariable("WindowSize", this.Width + "," + this.Height);
-            Functions.Config.storeVariable("LastPageOpen", CurrentPage);
-            if (Variables.CurrentGame.Title != "") Functions.Config.storeVariable("LastUsedGameAppID", Variables.CurrentGame.AppID.ToString());
+            await Functions.Core.Log("Closing LIFTOFF...");
+            if (!Maximized && !Fullscreen) Functions.Core.storeVariable("WindowSize", this.Width + "," + this.Height);
+            Functions.Core.storeVariable("LastPageOpen", CurrentPage);
+            if (Variables.CurrentGame.Title != "") Functions.Core.storeVariable("LastUsedGameAppID", Variables.CurrentGame.AppID.ToString());
             await Functions.Discord.discord.Deinitialize();
 
             if (Preloader.debug)
             {
                 this.Visibility = Visibility.Collapsed;
 
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: The application was closed successfully, you may not close this console.");
+                Functions.Core.Log("The application was closed successfully, you may not close this console.");
             }
             else Application.Current.Shutdown();
 
@@ -62,7 +64,7 @@ namespace LIFTOFF.Windows
         {
             if (Maximized)
             {
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Maximized off");
+                Functions.Core.Log("Maximized off");
                 MaxBtn.Content = "⧠";
 
                 this.WindowState = WindowState.Normal;
@@ -74,7 +76,7 @@ namespace LIFTOFF.Windows
             }
             else
             {
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Maximized on");
+                Functions.Core.Log("Maximized on");
                 MaxBtn.Content = "⧉";
 
                 this.MaxHeight = System.Windows.SystemParameters.MaximizedPrimaryScreenHeight;
@@ -94,7 +96,7 @@ namespace LIFTOFF.Windows
         /// <param name="e"></param>
         private void MinBtn_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Minimizing window...");
+            Functions.Core.Log("Minimizing window...");
             this.WindowState = WindowState.Minimized;
         }
 
@@ -109,7 +111,7 @@ namespace LIFTOFF.Windows
         {
             if (Fullscreen)
             {
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Fullscreen off");
+                Functions.Core.Log("Fullscreen off");
                 FullscreenBtn.Content = "⛗";
 
                 this.ResizeMode = ResizeMode.CanResizeWithGrip;
@@ -121,7 +123,7 @@ namespace LIFTOFF.Windows
             }
             else
             {
-                Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Fullscreen on");
+                Functions.Core.Log("Fullscreen on");
                 FullscreenBtn.Content = "⛖";
 
                 this.ResizeMode = ResizeMode.NoResize;
@@ -146,6 +148,8 @@ namespace LIFTOFF.Windows
             IntroPage.Visibility = Visibility.Hidden;
             PAGE_TEMPLATE.Visibility = Visibility.Hidden;
             ServersPage.Visibility = Visibility.Hidden;
+            ServerPage.Visibility = Visibility.Hidden;
+            EditGamePanel.Visibility = Visibility.Hidden;
         }
         #endregion
 
@@ -176,55 +180,22 @@ namespace LIFTOFF.Windows
         {
             if (!Fullscreen)
             {
-                if (IsSecondClick)
-                {
-                    IsSecondClick = false;
-                    if ((clickedTime - DateTime.Now).Milliseconds > -300)
-                    {
-                        Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Double click detected");
-                        if (Maximized)
-                        {
-                            Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Maximized off");
-                            MaxBtn.Content = "◻";
-
-                            this.WindowState = WindowState.Normal;
-                            this.BorderThickness = new Thickness(2, 2, 2, 2);
-
-                            FullscreenBtn.IsEnabled = true;
-
-                            Maximized = false;
-                        }
-                        else
-                        {
-                            Console.WriteLine("[" + DateTime.Now + "] LIFTOFF: Maximized on");
-                            MaxBtn.Content = "🗗";
-
-                            this.MaxHeight = System.Windows.SystemParameters.MaximizedPrimaryScreenHeight;
-                            this.BorderThickness = new Thickness(5, 5, 5, 5);
-                            this.WindowState = WindowState.Maximized;
-
-                            FullscreenBtn.IsEnabled = false;
-
-                            Maximized = true;
-                        }
-                    }
-                }
-                else
-                {
-                    IsSecondClick = true;
-                    clickedTime = DateTime.Now;
-                }
                 if (Mouse.LeftButton == MouseButtonState.Pressed) DragMove();
             }
         }
-        private void MenuHeader_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void MenuLogo_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             HeaderLogo.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Branding/Purple/Logo/Sizes/Logo1_Purple_150.png", UriKind.Absolute));
         }
 
-        private void MenuHeader_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void MenuLogo_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             HeaderLogo.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Branding/White/Logo/Sizes/Logo1_White_150.png", UriKind.Absolute));
+        }
+
+        private void HeaderLogo_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            OpenUrl("https://liftoff.publiczeus.com");
         }
 
         private void OpenUrl(string url)
@@ -269,14 +240,14 @@ namespace LIFTOFF.Windows
                     {
                         Busy.Visibility = Visibility.Visible;
                         BusyTxtTitle.Text = "LAUNCHING " + Variables.CurrentGame.Title.ToUpper() + "...";
-                        BusyTxtMessage.Text = "Joining server: \"" + currServer.Info.name + "\" (" + currServer.IpandPort() + ")";
+                        BusyTxtMessage.Text = "Joining server: \"" + currServer.Title + "\" (" + currServer.IPandPort() + ")";
 
                         if (Functions.Discord.DiscordAlive() && !Variables.GameRunning)
                         {
                             Functions.Discord.discord.client.SetPresence(new RichPresence()
                             {
                                 Details = "Playing: " + currServer.Game.Title + "!",
-                                State = currServer.Info.name + " | " + currServer.Info.map + "(" + currServer.Info.players + "/" + currServer.Info.max_players + ")",
+                                State = currServer.Title + " | " + currServer.Info.map + "(" + currServer.Info.players + "/" + currServer.Info.max_players + ")",
                                 Timestamps = Functions.Discord.startTime,
                                 Buttons = new DiscordRPC.Button[] { new DiscordRPC.Button() { Label = "Join Game", Url = "https://google.com" } },
                                 Assets = new Assets()
@@ -300,6 +271,7 @@ namespace LIFTOFF.Windows
         {
             if (Variables.CurrentGame.Title != "")
             {
+                ServerList.ItemsSource = null;
                 Busy.Visibility = Visibility.Visible;
                 BusyTxtTitle.Text = "FINDING A RANDOM SERVER WITH PLAYERS...";
                 BusyTxtMessage.Text = "Feeling lucky?";
@@ -318,7 +290,7 @@ namespace LIFTOFF.Windows
             }
         }
 
-        private void GamesCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void GamesCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (GamesCombo.SelectedItem != null)
             {
@@ -347,7 +319,7 @@ namespace LIFTOFF.Windows
             }
             if (CurrentPage == "servers")
             {
-                ShowServersPage();
+                await DisplayServers();
             }
         }
 
@@ -396,7 +368,7 @@ namespace LIFTOFF.Windows
             VersionNumberTxtBox.Text = Variables.AppVersion;
 
             //Sets window size from last launch
-            string winSize = Functions.Config.getVariable("WindowSize");
+            string winSize = Functions.Core.getVariable("WindowSize");
             if (winSize != "")
             {
                 string[] winSizeWH = winSize.Split(',');
@@ -404,13 +376,39 @@ namespace LIFTOFF.Windows
                 this.Height = double.Parse(winSizeWH[1]);
             }
 
-            //Gets the game list
-            Functions.Games.GetLocalGames();
-            GamesCombo.ItemsSource = Variables.GameList;
-            DisplayGames();
+            //Get Featured Games
+            using (var client = new WebClient())
+            {
+                List<Functions.Game> featuredGames = new List<Functions.Game>();
 
-            //Intro
-            string introComplete = Functions.Config.getVariable("IntroComplete");
+                var content = client.DownloadData("https://liftoff.publiczeus.com/app/FeaturedGames.txt");
+                using (var stream = new MemoryStream(content))
+                {
+                    StreamReader sr = new StreamReader(stream);
+                    string json = sr.ReadToEnd();
+                    if (json != "") featuredGames = JsonConvert.DeserializeObject<List<Functions.Game>>(json);
+                }
+                foreach (Functions.Game featuredGame in featuredGames)
+                {
+                    //Get Game file location via Steam
+
+                    if (Functions.Games.IsGameInstalled(featuredGame.AppID).Result) Variables.GameList.Add(featuredGame);
+                }
+
+                client.Dispose();
+            }
+
+            //Gets the game list
+            Functions.Games.GetSteamGames();
+            foreach (Functions.Game game in Variables.GameList)
+            {
+                DataGridRow row = new DataGridRow();
+                row.Item = game;
+                GamesCombo.Items.Add(row);
+            }
+
+                //Intro
+                string introComplete = Functions.Core.getVariable("IntroComplete");
             if (introComplete == "" || !bool.Parse(introComplete))
             {
                 //Show Intro
@@ -418,10 +416,8 @@ namespace LIFTOFF.Windows
             }
             else
             {
-
-
                 //Set last used game
-                string lastGame = Functions.Config.getVariable("LastUsedGameAppID");
+                string lastGame = Functions.Core.getVariable("LastUsedGameAppID");
                 if (lastGame != "")
                 {
                     uint appID = uint.Parse(lastGame);
@@ -435,7 +431,7 @@ namespace LIFTOFF.Windows
                 }
 
                 //Show last open Page
-                string lastPage = Functions.Config.getVariable("LastPageOpen");
+                string lastPage = Functions.Core.getVariable("LastPageOpen");
                 if (lastPage != "" && Variables.CurrentGame.Title != "")
                 {
                     switch (lastPage)
@@ -444,12 +440,15 @@ namespace LIFTOFF.Windows
                             ShowGamesPage();
                             break;
                         case "servers":
+                            DisplayGames();
                             ShowServersPage();
                             break;
                         case "mods":
+                            DisplayGames();
                             ShowModsPage();
                             break;
                         case "help":
+                            DisplayGames();
                             ShowHelpPage();
                             break;
                         default:
@@ -469,6 +468,8 @@ namespace LIFTOFF.Windows
             doubleAnimation.Duration = new Duration(TimeSpan.Parse("0:0:12"));
             doubleAnimation.Completed += new EventHandler(MOTD_Completed);
             MOTDTxt.BeginAnimation(Canvas.LeftProperty, doubleAnimation);
+
+            //Debug Section
         }
         private async void MOTD_Completed(object sender, EventArgs e)
         {
@@ -523,7 +524,7 @@ namespace LIFTOFF.Windows
 
             string initialDirectory()
             {
-                string storedDir = Functions.Config.getVariable("LastSteamDir");
+                string storedDir = Functions.Core.getVariable("LastSteamDir");
                 if (storedDir != "")
                 {
                     return storedDir;
@@ -556,7 +557,7 @@ namespace LIFTOFF.Windows
 
                 if (fileDialog.FileName.ToLower().Contains("steam"))
                 {
-                    Functions.Config.storeVariable("LastSteamDir", Path.GetDirectoryName(fileDialog.FileName));
+                    Functions.Core.storeVariable("LastSteamDir", Path.GetDirectoryName(fileDialog.FileName));
                     Process game = new Process();
                     game.StartInfo.FileName = fileDialog.FileName;
                     game.Start();
@@ -574,7 +575,7 @@ namespace LIFTOFF.Windows
                                 Title = 
                                 fileDialog.SafeFileName.Replace(".exe", "").ToUpper(), 
                                 AppID = appID, 
-                                FileLocation = fileDialog.FileName, 
+                                //FileLocation = fileDialog.FileName, 
                                 Plainname = plainName,
                                 AdditionalArguments = ""
                             
@@ -586,14 +587,14 @@ namespace LIFTOFF.Windows
                         else
                         {
                             Busy.Visibility = Visibility.Hidden;
-                            EditGame(fileDialog.SafeFileName.Replace(".exe", "").ToUpper(), appID, fileDialog.FileName, plainName, null);
+                            EditGame(fileDialog.SafeFileName.Replace(".exe", "").ToUpper(), appID, new List<string> { fileDialog.FileName }, plainName, null);
                         }
                         
                     }
                     catch
                     {
                         Busy.Visibility = Visibility.Hidden;
-                        EditGame(fileDialog.SafeFileName.Replace(".exe", "").ToUpper(), appID, fileDialog.FileName, plainName, null);
+                        EditGame(fileDialog.SafeFileName.Replace(".exe", "").ToUpper(), appID, new List<string> { fileDialog.FileName }, plainName, null);
                     }
                 }
                 else
@@ -608,9 +609,9 @@ namespace LIFTOFF.Windows
         private Functions.Game GameBeingEdited = null;
         private void EditGameBtn_Click(object sender, RoutedEventArgs e)
         {
-            EditGame(Variables.CurrentGame.Title, Variables.CurrentGame.AppID, Variables.CurrentGame.FileLocation, Variables.CurrentGame.Plainname, Variables.CurrentGame.BannerURL, Variables.CurrentGame.AdditionalArguments);
+            EditGame(Variables.CurrentGame.Title, Variables.CurrentGame.AppID, Variables.CurrentGame.FileLocations, Variables.CurrentGame.BannerURL, Variables.CurrentGame.AdditionalArguments);
         }
-        private void EditGame(string gameTitle, uint appID, string fileName, string plainName, string bannerURL, string arguments = "")
+        private void EditGame(string gameTitle, uint appID, List<string> fileLocations, string bannerURL, string arguments = "")
         {
             EditGameBG.Visibility = Visibility.Visible;
 
@@ -618,7 +619,9 @@ namespace LIFTOFF.Windows
 
             GameNameTxt.Text = gameTitle;
             GameAppIDTxt.Text = appID.ToString();
-            GameFileLocTxt.Text = fileName;
+
+            ExeCombo.ItemsSource = fileLocations;
+
             ArgumentsTxtBox.Text = arguments;
             BannerTxtBox.Text = bannerURL;
 
@@ -627,33 +630,32 @@ namespace LIFTOFF.Windows
             {
                 Title = gameTitle,
                 AppID = appID,
-                FileLocation = fileName,
+                //FileLocation = fileName,
                 BannerURL = bannerURL,
-                Plainname = plainName,
-                ServerAppID = 0
             };
         }
         private async void SaveEditedServerBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (GameNameTxt.Text.Length > 2)
+            if (GameNameTxt.Text.Length > 2 && !Variables.GameList.Any(x => x.AppID == uint.Parse(GameAppIDTxt.Text)))
             {
                 if (Variables.GameList.Any(x => x.AppID == GameBeingEdited.AppID)) Variables.GameList.Remove(Variables.CurrentGame);
 
                 GameBeingEdited.Title = GameNameTxt.Text;
                 GameBeingEdited.AppID = uint.Parse(GameAppIDTxt.Text);
-                GameBeingEdited.FileLocation = GameFileLocTxt.Text;
+                //GameBeingEdited.FileLocation = GameFileLocTxt.Text;
                 GameBeingEdited.AdditionalArguments = ArgumentsTxtBox.Text;
                 GameBeingEdited.BannerURL = BannerTxtBox.Text;
 
                 await Functions.Games.AddGame(GameBeingEdited);
                 Variables.CurrentGame = GameBeingEdited;
-                GameBeingEdited = null;
-
-                EditGamePanel.Visibility = Visibility.Hidden;
-                EditGameBG.Visibility = Visibility.Hidden;
-
-                ShowGamesPage();
             }
+
+            GameBeingEdited = null;
+
+            EditGamePanel.Visibility = Visibility.Hidden;
+            EditGameBG.Visibility = Visibility.Hidden;
+
+            ShowGamesPage();
         }
 
 
@@ -676,8 +678,8 @@ namespace LIFTOFF.Windows
         {
             if (GameList.SelectedItem != null)
             {
-                Variables.CurrentGame = (Functions.Game)GameList.SelectedItem;
-                GamesCombo.SelectedItem = (Functions.Game)GameList.SelectedItem;
+                Variables.CurrentGame = (Functions.Game)(GameList.SelectedItem as DataGridRow).Item;
+                GamesCombo.SelectedItem = (Functions.Game)(GameList.SelectedItem as DataGridRow).Item;
 
                 EditGameBtn.IsEnabled = true;
                 RemoveGameBtn.IsEnabled = true;
@@ -703,12 +705,34 @@ namespace LIFTOFF.Windows
 
         private async Task DisplayGames()
         {
-            if (GameList.ItemsSource != null) GameList.ItemsSource = null;
-            if (GamesCombo.ItemsSource != null) GamesCombo.ItemsSource = null;
+            GamesCombo.Items.Clear();
+            GameList.Items.Clear();
 
-            GameList.ItemsSource = Variables.GameList;
+            foreach (Functions.Game game in Variables.GameList.Where(game => game.Featured == true))
+            {
+                if (game.Featured)
+                { 
+                    DataGridRow row = new DataGridRow();
 
-            GamesCombo.ItemsSource = Variables.GameList;
+                    row.FontWeight = FontWeights.Bold;
+                    row.Foreground = new System.Windows.Media.SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFFFF500"));
+                    row.Item = game;
+
+                    GameList.Items.Add(row);
+                    GamesCombo.Items.Add(game);
+                }
+            }
+            foreach (Functions.Game game in Variables.GameList.Where(game => game.Featured == false))
+            {
+                if (!game.Featured)
+                {
+                    DataGridRow row = new DataGridRow();
+                    row.Item = game;
+
+                    GameList.Items.Add(row);
+                    GamesCombo.Items.Add(game);
+                }
+            }
 
             GamesCombo.SelectedIndex = Variables.GameList.FindIndex(item => item.AppID == Variables.CurrentGame.AppID);
 
@@ -730,10 +754,10 @@ namespace LIFTOFF.Windows
             ServersPage.Visibility = Visibility.Visible;
             CurrentPage = "servers";
             PageName.Text = CurrentPage.ToUpper();
-            ServerList.Items.Clear();
+            //ServerList.Items.Clear();
             PlayBtn.IsEnabled = false;
 
-            string savedServerCount = Functions.Config.getVariable("ServerCount");
+            string savedServerCount = Functions.Core.getVariable("ServerCount");
             if (savedServerCount == "-1")
             {
                 NumberToShow.Text = "";
@@ -764,10 +788,12 @@ namespace LIFTOFF.Windows
                 NumberToShow.IsEnabled = true;
                 ServerList.IsEnabled = true;
                 SearchBox.IsEnabled = true;
-                if (serverToDisplay == null) await DisplayServers();
+                if (serverToDisplay == null)
+                {
+                    if (ServerList.ItemsSource == null) await DisplayServers();
+                }
                 else
                 {
-
                     ServerList.Items.Add(serverToDisplay);
                 }
             }
@@ -783,8 +809,8 @@ namespace LIFTOFF.Windows
 
         private async void RefreshBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (NumberToShow.Text == "") Functions.Config.storeVariable("ServerCount", "-1");
-            else Functions.Config.storeVariable("ServerCount", NumberToShow.Text);
+            if (NumberToShow.Text == "") Functions.Core.storeVariable("ServerCount", "-1");
+            else Functions.Core.storeVariable("ServerCount", NumberToShow.Text);
 
             await DisplayServers();
         }
@@ -814,18 +840,16 @@ namespace LIFTOFF.Windows
         private async Task ShowServerPage(Functions.Server Server)
         {
             ServerPage.Visibility = Visibility.Visible;
-            string serverTitle = Server.Info.name.ToUpper() + " | Players: " + Server.Info.players + "/" + Server.Info.max_players;;
+            string serverTitle = Server.Title.ToUpper() + " | Players: " + Server.Info.players + "/" + Server.Info.max_players;;
 
-
-            if (Server.Featured)
-            {
-                serverTitle.Insert(0, "❤️ ");
-            }
-            else
-            {
-
-            }
-
+            long ping = long.Parse(Server.Ping);
+           
+            if (ping < 90) PingTxt.Foreground = new System.Windows.Media.SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF23CE00"));
+            else if (ping > 90 && ping < 300) PingTxt.Foreground = new System.Windows.Media.SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFC3CE00"));
+            else PingTxt.Foreground = new System.Windows.Media.SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF10CE00"));
+            
+            PingTxt.Text = ping.ToString() + "ms";
+            
             ServerNameTxt.Text = serverTitle;
 
             string bannerURL = Server.FeaturedBanner;
@@ -849,13 +873,19 @@ namespace LIFTOFF.Windows
             if (ServerList.SelectedItem != null) PlayBtn.IsEnabled = true;
         }
 
-        private async Task DisplayServers()
+        private void ServerList_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            //ServerList.Items.Refresh();
+        }
+
+        private async Task DisplayServers(bool Refresh = true)
         {
             PlayBtn.IsEnabled = false;
-            ServerList.Items.Clear();
+            if (ServerList.ItemsSource == null) ServerList.Items.Clear();
+            ServerList.ItemsSource = null;
 
             Busy.Visibility = Visibility.Visible;
-            if (NumberToShow.Text == "") BusyTxtTitle.Text = "LOOKING FOR ALL SERVERS";
+            if (NumberToShow.Text == "") BusyTxtTitle.Text = "LOOKING FOR SERVERS";
             else BusyTxtTitle.Text = "LOOKING FOR " + NumberToShow.Text + " SERVERS";
 
             BusyTxtMessage.Text = "Please wait...";
@@ -867,8 +897,31 @@ namespace LIFTOFF.Windows
 
             if (serversToGet > 1000 || serversToGet == -1) BusyTxtMessage.Text += "\r\n(Searching for more than 1000 servers could take a second)";
 
-            Variables.ServerList = await Functions.Servers.GetServers(serversToGet, this, SearchBox.Text);
+            if (Refresh) Variables.ServerList = await Functions.Servers.GetServers(serversToGet, this, SearchBox.Text);
 
+            ServerList.ItemsSource = Variables.ServerList;
+
+            if (ServerList.Items.Count == 0)
+            {
+                SelectAGameTxt.Visibility = Visibility.Visible;
+                SelectAGameTxt.Text = "NO SERVERS FOUND :/";
+                RefreshBtn.IsEnabled = false;
+                NumberToShow.IsEnabled = false;
+                ServerList.IsEnabled = false;
+                SearchBox.IsEnabled = false;
+            }
+            else
+            {
+                SelectAGameTxt.Visibility = Visibility.Hidden;
+                SelectAGameTxt.Text = "SELECT A GAME FIRST";
+                RefreshBtn.IsEnabled = true;
+                NumberToShow.IsEnabled = true;
+                ServerList.IsEnabled = true;
+                SearchBox.IsEnabled = true;
+            }
+
+
+            /*
             foreach (Functions.Server server in Variables.ServerList)
             {
                 if (server.Featured)
@@ -890,6 +943,7 @@ namespace LIFTOFF.Windows
                     ServerList.Items.Add(server);
                 }
             }
+            */
 
             Busy.Visibility = Visibility.Hidden;
         }
@@ -900,15 +954,20 @@ namespace LIFTOFF.Windows
             e.Handled = regex.IsMatch(e.Text);
         }
 
-        private void SearchBox_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        private async void SearchBox_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (SearchBox.Text != "")
             {
-                ServerList.ItemsSource = Variables.ServerList.Where(stringToCheck => stringToCheck.Info.name.ToLower().Contains(SearchBox.Text.ToLower())).ToList<Functions.Server>();
+                ServerList.ItemsSource = null;
+                ServerList.Items.Clear();
+                foreach (Functions.Server server in Variables.ServerList.Where(stringToCheck => stringToCheck.Info.name.ToLower().Contains(SearchBox.Text.ToLower())).ToList<Functions.Server>())
+                {
+                    ServerList.Items.Add(server);
+                }
             }
             else
             {
-                ServerList.ItemsSource = Variables.ServerList;
+                await DisplayServers(false);
             }
         }
 
@@ -1084,7 +1143,7 @@ namespace LIFTOFF.Windows
             MinBtn.IsEnabled = true;
             MaxBtn.IsEnabled = true;
 
-            Functions.Config.storeVariable("IntroComplete", bool.TrueString);
+            Functions.Core.storeVariable("IntroComplete", bool.TrueString);
         }
 
         #endregion

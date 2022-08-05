@@ -6,13 +6,12 @@
         xmlns:local="clr-namespace:LIFTOFF.Windows"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="Home" Height="208" MinHeight="400" Width="328" MinWidth="614" WindowStyle="None" ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen" Background="#FF131313" AllowsTransparency="True" BorderThickness="2,2,2,2" BorderBrush="#FF9017AC">
+        Title="Home" Height="188" MinHeight="400" Width="393" MinWidth="614" WindowStyle="None" ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen" Background="#FF131313" AllowsTransparency="True" BorderThickness="2,2,2,2" BorderBrush="#FF9017AC">
     <Grid Margin="2,2,-2,-2" Focusable="True">
-
         <Image Source="/Assets/Branding/Pattern.png" Opacity="0.01" Stretch="UniformToFill"/>
         <Image Source="/Assets/Branding/White/Title/Sizes/Title_W_300.png" Opacity="0.08" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None" Width="300" Height="92"/>
         <Image x:Name="MenuHeader" HorizontalAlignment="Left" Height="96"  VerticalAlignment="Top" Width="265" Source="/Assets/Sprites/MenuHeader.png" Margin="-2,-2,0,0"/>
-        <Image x:Name="HeaderLogo" MouseEnter="MenuHeader_MouseEnter" MouseLeave="MenuHeader_MouseLeave" HorizontalAlignment="Left" Height="85" VerticalAlignment="Top" Width="85" Source="/Assets/Branding/White/Logo/Sizes/Logo1_White_150.png" Margin="-2,-2,0,0"/>
+        <Image x:Name="HeaderLogo" MouseDown="HeaderLogo_MouseDown" MouseEnter="MenuLogo_MouseEnter" MouseLeave="MenuLogo_MouseLeave" HorizontalAlignment="Left" Height="85" VerticalAlignment="Top" Width="85" Source="/Assets/Branding/White/Logo/Sizes/Logo1_White_150.png" Margin="-2,-2,0,0" Cursor="Hand"/>
 
         <ComboBox Style="{DynamicResource ComboBoxStyle}" Cursor="Hand" x:Name="GamesCombo" SelectionChanged="GamesCombo_SelectionChanged" Margin="0,32,127,0" VerticalAlignment="Top" Height="30" BorderThickness="0,0,0,0" Foreground="White" Background="#FF471852" BorderBrush="#FF571A65" HorizontalAlignment="Right" Width="192" FontFamily="Dubai" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Template="{DynamicResource ComboBoxTemplate}" FontWeight="Bold" FontSize="15">
             <ComboBox.ItemContainerStyle>
@@ -58,7 +57,7 @@
             <Grid Margin="0,0,24,0">
                 <Button Cursor="Hand" x:Name="GamesBtn" Click="GamesBtn_Click" Content="🎮" HorizontalAlignment="Center" Margin="0,4,0,236" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Height="60" FontSize="30" FontFamily="Dubai"/>
                 <Button Cursor="Hand" x:Name="ServersBtn" Click="ServersBtn_Click" Content="▤" HorizontalAlignment="Center" Margin="0,64,0,176" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Height="60" FontSize="30" FontFamily="Dubai"/>
-                <Button Cursor="Hand" x:Name="ModsBtn" Click="ModsBtn_Click" Content="🛠️" HorizontalAlignment="Center" Width="75" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Margin="0,124,0,116" Height="60" FontSize="30" FontFamily="Dubai"/>
+                <Button Cursor="Hand" x:Name="ModsBtn" Click="ModsBtn_Click" Content="🛠️" HorizontalAlignment="Center" Width="75" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Margin="0,124,0,116" Height="60" FontSize="30" FontFamily="Dubai" IsEnabled="False"/>
                 <Button Cursor="Hand" x:Name="HelpBtn" Click="HelpBtn_Click" Content="？" HorizontalAlignment="Center" Margin="0,184,0,56" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" Height="60" FontSize="30" FontFamily="Dubai" IsEnabled="False"/>
                 <TextBlock x:Name="VersionNumberTxtBox" TextWrapping="Wrap" Background="{x:Null}" Foreground="White" TextAlignment="Center" HorizontalAlignment="Center" Width="70" FontFamily="Dubai" Height="20" VerticalAlignment="Bottom"/>
                 <Button Cursor="Hand" Style="{DynamicResource MainButtonStyke}" x:Name="CreditsBtn" Click="CreditsBtn_Click" Content="CREDITS" HorizontalAlignment="Center" Margin="0,0,0,20" Width="75" Background="{x:Null}" Foreground="White" BorderBrush="{x:Null}" FontFamily="Dubai" FontWeight="Bold" Height="25" VerticalAlignment="Bottom"/>
@@ -137,7 +136,7 @@
                 <Button Cursor="Hand" x:Name="EditGameBtn"  Content="EDIT" Click="EditGameBtn_Click" FontFamily="Dubai" Background="#FF9017AC" BorderBrush="{x:Null}" Foreground="White" FontWeight="Bold" Height="57" VerticalAlignment="Bottom" Grid.RowSpan="2" HorizontalAlignment="Right" Width="82" Style="{DynamicResource MainButtonStyke}" Margin="0,0,86,-1" FontSize="22" IsEnabled="False"/>
                 <Button Cursor="Hand" x:Name="RemoveGameBtn"  Content="REMOVE" Click="RemoveGameBtn_Click" FontFamily="Dubai" Background="#FF9017AC" BorderBrush="{x:Null}" Foreground="White" FontWeight="Bold" Height="57" VerticalAlignment="Bottom" Grid.RowSpan="2" HorizontalAlignment="Right" Width="105" Style="{DynamicResource MainButtonStyke}" Margin="0,0,173,-1" FontSize="22" IsEnabled="False"/>
             </Grid>
-            <Grid x:Name="EditGamePanel" Background="#F4505050" Margin="26,62,26,32" Visibility="Hidden">
+            <Grid x:Name="EditGamePanel" Background="#F4505050" Margin="26,62,26,32" Visibility="Visible">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
@@ -149,19 +148,17 @@
                 <TextBox Style="{DynamicResource TextBoxStyle}" x:Name="GameNameTxt" Height="30" Margin="31,55,175,0" TextWrapping="Wrap" Text="ARMA 3" VerticalAlignment="Top" FontFamily="Dubai" FontSize="16" Background="{x:Null}" Foreground="White" FontWeight="Normal"/>
                 <TextBox Style="{DynamicResource TextBoxStyle}" x:Name="GameAppIDTxt" PreviewTextInput="GameAppIDTxt_PreviewTextInput"  Height="30" Margin="0,55,76,0" TextWrapping="Wrap" Text="00000" VerticalAlignment="Top" FontFamily="Dubai" Background="{x:Null}" Foreground="White" FontWeight="Bold" FontSize="16" HorizontalAlignment="Right" Width="74"/>
                 <Button Cursor="Hand" x:Name="SaveEditedServerBtn" Click="SaveEditedServerBtn_Click" Content="SAVE CHANGES" Height="35" Margin="304,0,16,8" VerticalAlignment="Bottom" Background="{x:Null}" Foreground="White" FontFamily="Dubai" FontWeight="Bold" FontSize="20" Style="{DynamicResource MainButtonStyke}"/>
-                <Viewbox Margin="33,105,0,0" StretchDirection="Both" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Width="442">
-                    <TextBox Style="{DynamicResource TextBoxStyle}" x:Name="GameFileLocTxt" TextWrapping="WrapWithOverflow" FontFamily="Dubai" FontSize="22" Background="{x:Null}" Foreground="White" FontWeight="Normal" FontStretch="Normal"/>
-                </Viewbox>
+                <ComboBox x:Name="ExeCombo" Margin="31,107,206,0" Height="30" VerticalAlignment="Top"/>
                 <TextBox Style="{DynamicResource TextBoxStyle}" x:Name="ArgumentsTxtBox" Height="30" Margin="31,170,236,0" TextWrapping="Wrap" Text="-nosplash -skiplogos" VerticalAlignment="Top" FontFamily="Dubai" FontSize="16" Background="{x:Null}" Foreground="White" FontWeight="Normal"/>
                 <TextBlock HorizontalAlignment="Left" Height="24" Margin="33,90,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="104" Foreground="White" FontFamily="Dubai" FontWeight="Bold"><Run Language="en-gb" Text="GAME LOCATION:"/></TextBlock>
                 <TextBlock HorizontalAlignment="Left" Height="24" Margin="35,212,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="153" Foreground="White" FontFamily="Dubai" FontWeight="Bold"><Run Language="en-gb" Text="BANNER URL:"/></TextBlock>
                 <TextBox Style="{DynamicResource TextBoxStyle}" x:Name="BannerTxtBox" Height="30" Margin="33,226,76,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Dubai" FontSize="16" Background="{x:Null}" Foreground="White" FontWeight="Normal"/>
             </Grid>
         </Grid>
-        <Grid x:Name="ServersPage" Margin="65,0,10,10" Visibility="Visible">
+        <Grid x:Name="ServersPage" Margin="65,0,10,10" Visibility="Hidden">
             <Grid Margin="35,65,35,35">
                 <Rectangle Fill="#FF1D1D1D" Opacity="0.72" Stroke="#FF1D1D1D" />
-                <DataGrid x:Name="ServerList" MouseDoubleClick="ServerList_MouseDoubleClick" SelectedCellsChanged="ServerList_SelectedCellsChanged" FontFamily="Dubai" BorderThickness="3" Margin="0,19,0,0" BorderBrush="{x:Null}" Foreground="White" CanUserReorderColumns="False" CanUserSortColumns="True" ScrollViewer.CanContentScroll="True" RowHeight="30" ColumnHeaderHeight="30" Background="{x:Null}" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" CanUserResizeRows="False" HorizontalGridLinesBrush="White" VerticalGridLinesBrush="{x:Null}" SelectionMode="Single" RowDetailsVisibilityMode="Collapsed" FontSize="20" MinColumnWidth="148" HorizontalScrollBarVisibility="Disabled" EnableColumnVirtualization="True" Style="{DynamicResource DataGridStyle}" Focusable="False" AlternatingRowBackground="#339017AC" CanUserAddRows="False" CanUserDeleteRows="False">
+                <DataGrid x:Name="ServerList" ScrollViewer.ScrollChanged="ServerList_ScrollChanged" MouseDoubleClick="ServerList_MouseDoubleClick" SelectedCellsChanged="ServerList_SelectedCellsChanged" FontFamily="Dubai" BorderThickness="3" Margin="0,19,0,0" BorderBrush="{x:Null}" Foreground="White" CanUserReorderColumns="False" CanUserSortColumns="True" ScrollViewer.CanContentScroll="True" RowHeight="30" ColumnHeaderHeight="30" Background="{x:Null}" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" CanUserResizeRows="False" HorizontalGridLinesBrush="White" VerticalGridLinesBrush="{x:Null}" SelectionMode="Single" RowDetailsVisibilityMode="Collapsed" FontSize="20" MinColumnWidth="148" HorizontalScrollBarVisibility="Disabled" EnableColumnVirtualization="True" Style="{DynamicResource DataGridStyle}" Focusable="False" AlternatingRowBackground="#339017AC" CanUserAddRows="False" CanUserDeleteRows="False">
                     <DataGrid.Resources>
                         <Style TargetType="{x:Type DataGridColumnHeader}">
                             <Setter Property="Background" Value="Transparent"/>
@@ -186,7 +183,7 @@
                                 </Style>
                             </DataGridTextColumn.HeaderStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Binding="{Binding Info.name}" ClipboardContentBinding="{x:Null}"  MinWidth="200" Width="*" Header="SERVER NAME" FontSize="14"  FontFamily="Dubai">
+                        <DataGridTextColumn Binding="{Binding Title}" ClipboardContentBinding="{x:Null}"  MinWidth="200" Width="*" Header="SERVER NAME" FontSize="14"  FontFamily="Dubai">
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="{x:Type DataGridColumnHeader}">
                                     <Setter Property="Padding" Value="4"/>
@@ -198,7 +195,7 @@
                                 </Style>
                             </DataGridTextColumn.HeaderStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Binding="{Binding Info.players}" ClipboardContentBinding="{x:Null}" Header="👥" FontSize="14" FontFamily="Dubai" MinWidth="35" MaxWidth="35">
+                        <DataGridTextColumn Binding="{Binding Info.players}" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="👥" FontSize="14" FontFamily="Dubai" MinWidth="35" MaxWidth="35">
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="{x:Type DataGridColumnHeader}">
                                     <Setter Property="Padding" Value="3"/>
@@ -209,7 +206,7 @@
                                 </Style>
                             </DataGridTextColumn.HeaderStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Binding="{Binding Info.max_players}" ClipboardContentBinding="{x:Null}" Header="MAX" FontSize="14" FontFamily="Dubai" MinWidth="40" MaxWidth="40">
+                        <DataGridTextColumn Binding="{Binding Info.max_players}" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="MAX" FontSize="14" FontFamily="Dubai" MinWidth="40" MaxWidth="40">
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="{x:Type DataGridColumnHeader}">
                                     <Setter Property="Padding" Value="3"/>
@@ -228,18 +225,6 @@
                                     <Setter Property="Background" Value="Transparent"/>
                                     <Setter Property="FontSize" Value="14"/>
                                     <Setter Property="FontWeight" Value="Bold"/>
-                                </Style>
-                            </DataGridTextColumn.HeaderStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Binding="{Binding Info.secure}" ClipboardContentBinding="{x:Null}"  MinWidth="60" MaxWidth="60" Header="SECURE" FontSize="14" FontFamily="Dubai">
-                            <DataGridTextColumn.HeaderStyle>
-                                <Style TargetType="{x:Type DataGridColumnHeader}">
-                                    <Setter Property="Padding" Value="4"/>
-                                    <Setter Property="Margin" Value="2"/>
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="FontSize" Value="14"/>
-                                    <Setter Property="FontWeight" Value="Bold"/>
-                                    <Setter Property="ToolTip" Value="{Binding IpandPort}"/>
                                 </Style>
                             </DataGridTextColumn.HeaderStyle>
                         </DataGridTextColumn>
@@ -264,6 +249,12 @@
                     </DataGrid.CellStyle>
                     <DataGrid.RowStyle>
                         <Style TargetType="{x:Type DataGridRow}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Featured}" Value="True">
+                                    <Setter Property="Foreground" Value="#FFFFF500" />
+
+                                </DataTrigger>
+                            </Style.Triggers>
                             <Setter Property="Foreground" Value="White"/>
                             <Setter Property="Background" Value="Transparent"/>
                         </Style>
@@ -277,17 +268,20 @@
                 <TextBlock Height="19" Margin="0,4,237,0" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Right" Foreground="White" FontFamily="Dubai" HorizontalAlignment="Right" Width="61" FontWeight="Bold" FontSize="15"><Run Text="SEARCH"/><Run Language="en-gb" Text=":"/></TextBlock>
                 <TextBlock x:Name="Counter" TextWrapping="Wrap" Height="23" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="284" Margin="0,0,0,-23" Foreground="#FF636363" TextAlignment="Right"><Run Language="en-gb" Text=""/></TextBlock>
                 <Button Cursor="Hand" x:Name="FilterBtn" Click="FilterBtn_Click" Content="🔎" Height="31" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Width="31" FontWeight="Normal" FontFamily="Dubai" FontSize="15" Margin="0,-2,32,0"/>
+
                 <Grid x:Name="ServerPage" Visibility="Hidden" Margin="-102,58,-43,-47">
                     <Rectangle x:Name="ServerPageBG" Stroke="Black" Fill="#CA000000" Margin="0,-125,0,10"/>
                     <Image x:Name="ServerBanner" Height="116" VerticalAlignment="Top" Stretch="UniformToFill" StretchDirection="Both"/>
-                    <Rectangle Canvas.Left="688" Stroke="#FF9017AC" Canvas.Top="-144" Margin="0,113,0,0" Fill="#FF171717" StrokeThickness="2"/>
+                    <Rectangle Canvas.Left="688" Stroke="#FF9017AC" Canvas.Top="-144" Margin="-2,113,-2,2" Fill="#FF171717" StrokeThickness="2"/>
                     <Rectangle Canvas.Left="688" Stroke="#FF9017AC" Canvas.Top="-144" Margin="0,113,0,0" StrokeThickness="2" Opacity="0.01">
                         <Rectangle.Fill>
                             <ImageBrush ImageSource="/Assets/Branding/Pattern.png" Stretch="UniformToFill"/>
                         </Rectangle.Fill>
                     </Rectangle>
-                    <Button x:Name="CloseServerBtn" Click="CloseServerBtn_Click" Cursor="Hand" Content="🞩" Style="{DynamicResource MainButtonStyke}" Height="40" Margin="0,20,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="40" FontFamily="Dubai" FontSize="20" Background="#AD171717" Foreground="White" BorderThickness="1,1,1,1" BorderBrush="#FF9017AC"/>
+                    <Button x:Name="CloseServerBtn" Click="CloseServerBtn_Click" Cursor="Hand" Content="🞩" Style="{DynamicResource MainButtonStyke}" Height="40" Margin="0,20,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="40" FontFamily="Dubai" FontSize="20" Background="#AD171717" Foreground="White" BorderThickness="2,2,2,2" BorderBrush="#FF9017AC"/>
                     <TextBlock x:Name="ServerNameTxt" Height="43" Margin="10,130,10,0" TextWrapping="Wrap" Text="SERVER_NAME" VerticalAlignment="Top" Foreground="White" FontFamily="Dubai" FontSize="26" FontWeight="Bold"/>
+                    <TextBlock x:Name="PingTxt" Margin="0,89,0,0" TextWrapping="Wrap" Text="1000+ms" Foreground="#FF23CE00" FontFamily="Dubai" FontSize="20" FontWeight="Bold" HorizontalAlignment="Right" Width="83" Height="34" VerticalAlignment="Top"/>
+                    <Button x:Name="JoinServerBtn" Click="PlayBtn_Click" Content="JOIN SERVER" Margin="0,0,10,10" Background="#FF9017AC" Foreground="White" BorderThickness="0,0,0,0" FontFamily="Dubai" FontSize="20" FontWeight="Bold" HorizontalAlignment="Right" Width="186" Height="59" VerticalAlignment="Bottom"/>
                 </Grid>
             </Grid>
         </Grid>
