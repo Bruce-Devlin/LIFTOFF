@@ -1,6 +1,7 @@
 ﻿using DiscordRPC;
 using Gameloop.Vdf;
 using Gameloop.Vdf.Linq;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -114,7 +115,42 @@ namespace LIFTOFF.Functions
     {
         public static async Task<bool> IsGameInstalled(ulong appID)
         {
-            bool r = File.ReadAllText("C:\\Program Files (x86)\\Steam\\steamapps\\libraryfolders.vdf").Contains(appID.ToString());
+            string SteamLibsFileLoc = "";
+
+            if (Functions.Core.getVariable("SteamLibsFile") == "")
+            {
+                Functions.Core.Log("SHIT");
+                if (!File.Exists("C:\\Program Files (x86)\\Steam\\steamapps\\libraryfolders.vdf"))
+                {
+                    await Functions.Core.Log("Cant find library file, please select a new one");
+                    OpenFileDialog fileDialog = new OpenFileDialog
+                    {
+                        Title = "Select \"libraryfolder.vdf\"",
+
+                        CheckFileExists = true,
+                        CheckPathExists = true,
+
+                        DefaultExt = ".vdf",
+                        Filter = "VDF files|*.vdf",
+                        FilterIndex = 2,
+                        RestoreDirectory = true,
+
+                        ReadOnlyChecked = true,
+                        ShowReadOnly = true
+                    };
+
+                    if ((bool)fileDialog.ShowDialog())
+                    {
+                        SteamLibsFileLoc = fileDialog.FileName;
+                    }
+                }
+                else SteamLibsFileLoc = "C:\\Program Files (x86)\\Steam\\steamapps\\libraryfolders.vdf";
+                Functions.Core.storeVariable("SteamLibsFile", SteamLibsFileLoc);
+            }
+
+            await Core.Log("Steam Libary location: " + Functions.Core.getVariable("SteamLibsFile"));
+
+            bool r = File.ReadAllText(Functions.Core.getVariable("SteamLibsFile")).Contains(appID.ToString());
             return r;
         }
 
@@ -291,8 +327,8 @@ namespace LIFTOFF.Functions
         public static async Task GetSteamGames()
         {
             await Core.Log("Getting Steam Games");
+            string SteamLibsFile = Functions.Core.getVariable("SteamLibsFile");
 
-            string SteamLibsFile = File.ReadAllText("C:\\Program Files (x86)\\Steam\\steamapps\\libraryfolders.vdf");
             VToken steamLib = VdfConvert.Deserialize(SteamLibsFile).Value;
 
             foreach (VProperty steamLibrary in steamLib)
