@@ -1,0 +1,14 @@
+﻿<Window x:Name="PreloaderWin" x:Class="LIFTOFF.Windows.Preloader"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LIFTOFF.Windows"
+        mc:Ignorable="d"
+        Loaded="Window_Loaded"
+        Title="Preloader" Height="360" Width="360" WindowStyle="None" Background="#FF121212" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" AllowsTransparency="True" BorderBrush="#FF9017AC" BorderThickness="2,2,2,2">
+    <Grid>
+        <Image Height="300" Margin="0,20,0,0" VerticalAlignment="Top" Source="/Assets/Branding/White/Logo/Sizes/Logo1_White_300.png" HorizontalAlignment="Center"/>
+        <TextBlock x:Name="StatusTextBlock" HorizontalAlignment="Center" Height="32" TextWrapping="Wrap" VerticalAlignment="Top" Width="340" Margin="0,304,0,0" Foreground="White" FontSize="24" TextAlignment="Center" FontWeight="Bold" FontFamily="Segoe UI Variable Display"><Run Language="en-gb" Text="LAUNCHING..."/></TextBlock>
+    </Grid>
+</Window>

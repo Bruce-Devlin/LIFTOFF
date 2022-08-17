@@ -1,0 +1,146 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <StartupObject>LIFTOFF.App</StartupObject>
+    <UseWindowsForms>True</UseWindowsForms>
+    <ApplicationIcon>Logo1_White_150.ico</ApplicationIcon>
+    <Authors>Bruce Devlin</Authors>
+    <Product>LIFTOFF</Product>
+    <Description>A game launcher for Steam.</Description>
+    <Copyright>LIFTOFF</Copyright>
+    <PackageIcon>Logo1_White_Icon.png</PackageIcon>
+    <AssemblyVersion>0.0.3.13</AssemblyVersion>
+    <FileVersion>0.0.3.13</FileVersion>
+    <Company>$(Authors)</Company>
+    <Version>0.0.3.13</Version>
+    <SignAssembly>False</SignAssembly>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Branding\Pattern.png" />
+    <None Remove="Assets\Branding\Purple\Logo\Sizes\Logo1_Purple_1000.png" />
+    <None Remove="Assets\Branding\Purple\Logo\Sizes\Logo1_Purple_150.png" />
+    <None Remove="Assets\Branding\Purple\Logo\Sizes\Logo1_Purple_300.png" />
+    <None Remove="Assets\Branding\Purple\Logo\Sizes\Logo1_Purple_500.png" />
+    <None Remove="Assets\Branding\Purple\Logo\Sizes\Logo1_Purple_750.png" />
+    <None Remove="Assets\Branding\White\Logo\Sizes\Logo1_White_1000.png" />
+    <None Remove="Assets\Branding\White\Logo\Sizes\Logo1_White_300.png" />
+    <None Remove="Assets\Branding\White\Logo\Sizes\Logo1_White_500.png" />
+    <None Remove="Assets\Branding\White\Logo\Sizes\Logo1_White_750.png" />
+    <None Remove="Assets\Branding\White\Title\Sizes\Title_W_1000.png" />
+    <None Remove="Assets\Branding\White\Title\Sizes\Title_W_150.png" />
+    <None Remove="Assets\Branding\White\Title\Sizes\Title_W_1500.png" />
+    <None Remove="Assets\Branding\White\Title\Sizes\Title_W_300.png" />
+    <None Remove="Assets\Branding\White\Title\Sizes\Title_W_500.png" />
+    <None Remove="Assets\Branding\White\Title\Sizes\Title_W_750.png" />
+    <None Remove="Assets\DubaiFont\DUBAI-BOLD.TTF" />
+    <None Remove="Assets\DubaiFont\DUBAI-LIGHT.TTF" />
+    <None Remove="Assets\DubaiFont\DUBAI-MEDIUM.TTF" />
+    <None Remove="Assets\DubaiFont\DUBAI-REGULAR.TTF" />
+    <None Remove="Assets\Sprites\MenuBack.png" />
+    <None Remove="Assets\Sprites\MenuHeader.png" />
+    <None Remove="Assets\Sprites\MenuHeaderActive.png" />
+    <None Remove="Assets\Sprites\Shadow.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="{215d64d2-031c-33c7-96e3-61794cd1ee61}">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>4</VersionMinor>
+      <VersionMajor>2</VersionMajor>
+      <Guid>215d64d2-031c-33c7-96e3-61794cd1ee61</Guid>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Logo1_White_150.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DiscordRichPresence" Version="1.0.175" />
+    <PackageReference Include="Gameloop.Vdf" Version="0.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Branding\Pattern.png" />
+    <Resource Include="Assets\Branding\Purple\Logo\Sizes\Logo1_Purple_1000.png" />
+    <Resource Include="Assets\Branding\Purple\Logo\Sizes\Logo1_Purple_150.png" />
+    <Resource Include="Assets\Branding\Purple\Logo\Sizes\Logo1_Purple_300.png" />
+    <Resource Include="Assets\Branding\Purple\Logo\Sizes\Logo1_Purple_500.png" />
+    <Resource Include="Assets\Branding\Purple\Logo\Sizes\Logo1_Purple_750.png" />
+    <Resource Include="Assets\Branding\White\Logo\Sizes\Logo1_White_1000.png" />
+    <Resource Include="Assets\Branding\White\Logo\Sizes\Logo1_White_150.png" />
+    <Resource Include="Assets\Branding\White\Logo\Sizes\Logo1_White_300.png" />
+    <Resource Include="Assets\Branding\White\Logo\Sizes\Logo1_White_500.png" />
+    <Resource Include="Assets\Branding\White\Logo\Sizes\Logo1_White_750.png" />
+    <Resource Include="Assets\Branding\White\Logo\Sizes\Logo1_White_Icon.png" />
+    <Resource Include="Assets\Branding\White\Title\Sizes\Title_W_1000.png" />
+    <Resource Include="Assets\Branding\White\Title\Sizes\Title_W_150.png" />
+    <Resource Include="Assets\Branding\White\Title\Sizes\Title_W_1500.png" />
+    <Resource Include="Assets\Branding\White\Title\Sizes\Title_W_300.png" />
+    <Resource Include="Assets\Branding\White\Title\Sizes\Title_W_500.png" />
+    <Resource Include="Assets\Branding\White\Title\Sizes\Title_W_750.png" />
+    <Resource Include="Assets\DubaiFont\DUBAI-BOLD.TTF" />
+    <Resource Include="Assets\DubaiFont\DUBAI-LIGHT.TTF" />
+    <Resource Include="Assets\DubaiFont\DUBAI-MEDIUM.TTF" />
+    <Resource Include="Assets\DubaiFont\DUBAI-REGULAR.TTF" />
+    <Resource Include="Assets\Sprites\MenuBack.png" />
+    <Resource Include="Assets\Sprites\MenuHeader.png" />
+    <Resource Include="Assets\Sprites\MenuHeaderActive.png" />
+    <Resource Include="Assets\Sprites\Shadow.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\Branding\Purple\Title\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Interop.IWshRuntimeLibrary">
+      <HintPath>..\..\Blaze\Blaze\obj\Debug\Interop.IWshRuntimeLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\Branding\White\Logo\Sizes\Logo1_White_150.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="Assets\Branding\White\Logo\Sizes\Logo1_White_Icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="ROCKET.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="steam_api64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
