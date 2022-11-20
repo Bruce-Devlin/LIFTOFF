@@ -49,6 +49,7 @@ namespace LIFTOFF
 
         public static Functions.Game CurrentGame = new Functions.Game() { Title = "" };
         public static List<Functions.Game> GameList = new List<Functions.Game>();
+        public static string SteamLibsFile = "";
 
         public static string HomeDir = Environment.ExpandEnvironmentVariables("%ProgramFiles%") + @"\LIFTOFF";
         public static string ConfigDir = Environment.ExpandEnvironmentVariables("%AppData%") + @"\LIFTOFF";

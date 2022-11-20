@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:LIFTOFF.Windows"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="Home" Height="188" MinHeight="400" Width="393" MinWidth="614" WindowStyle="None" ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen" Background="#FF131313" AllowsTransparency="True" BorderThickness="2,2,2,2" BorderBrush="#FF9017AC">
+        Title="Home" Height="790" MinHeight="790" Width="1205" MinWidth="1205" WindowStyle="None" ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen" Background="#FF131313" AllowsTransparency="True" BorderThickness="2,2,2,2" BorderBrush="#FF9017AC">
     <Grid Margin="2,2,-2,-2" Focusable="True">
         <Image Source="/Assets/Branding/Pattern.png" Opacity="0.01" Stretch="UniformToFill"/>
         <Image Source="/Assets/Branding/White/Title/Sizes/Title_W_300.png" Opacity="0.08" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None" Width="300" Height="92"/>
@@ -155,7 +155,7 @@
                 <TextBox Style="{DynamicResource TextBoxStyle}" x:Name="BannerTxtBox" Height="30" Margin="33,226,76,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Dubai" FontSize="16" Background="{x:Null}" Foreground="White" FontWeight="Normal"/>
             </Grid>
         </Grid>
-        <Grid x:Name="ServersPage" Margin="65,0,10,10" Visibility="Hidden">
+        <Grid x:Name="ServersPage" Margin="65,0,10,10" Visibility="Visible">
             <Grid Margin="35,65,35,35">
                 <Rectangle Fill="#FF1D1D1D" Opacity="0.72" Stroke="#FF1D1D1D" />
                 <DataGrid x:Name="ServerList" ScrollViewer.ScrollChanged="ServerList_ScrollChanged" MouseDoubleClick="ServerList_MouseDoubleClick" SelectedCellsChanged="ServerList_SelectedCellsChanged" FontFamily="Dubai" BorderThickness="3" Margin="0,19,0,0" BorderBrush="{x:Null}" Foreground="White" CanUserReorderColumns="False" CanUserSortColumns="True" ScrollViewer.CanContentScroll="True" RowHeight="30" ColumnHeaderHeight="30" Background="{x:Null}" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" CanUserResizeRows="False" HorizontalGridLinesBrush="White" VerticalGridLinesBrush="{x:Null}" SelectionMode="Single" RowDetailsVisibilityMode="Collapsed" FontSize="20" MinColumnWidth="148" HorizontalScrollBarVisibility="Disabled" EnableColumnVirtualization="True" Style="{DynamicResource DataGridStyle}" Focusable="False" AlternatingRowBackground="#339017AC" CanUserAddRows="False" CanUserDeleteRows="False">
@@ -171,7 +171,7 @@
                         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#FFFFFFFF"/>
                     </DataGrid.Resources>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Modded}" ClipboardContentBinding="{x:Null}"  MinWidth="40" MaxWidth="49" Header="MOD" FontSize="14"  FontFamily="Dubai">
+                        <DataGridTextColumn Binding="{Binding Modded}" ClipboardContentBinding="{x:Null}"  MinWidth="40" MaxWidth="49" Header="MODS" FontSize="14"  FontFamily="Dubai">
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="{x:Type DataGridColumnHeader}">
                                     <Setter Property="Padding" Value="4"/>
@@ -192,6 +192,17 @@
                                     <Setter Property="FontSize" Value="14"/>
                                     <Setter Property="FontWeight" Value="Bold"/>
                                     <Setter Property="ToolTip" Value="{Binding IpandPort}"/>
+                                </Style>
+                            </DataGridTextColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Binding="{Binding NearPing}" CanUserResize="False" ClipboardContentBinding="{x:Null}" Header="📶" FontSize="14" FontFamily="Dubai" MinWidth="35" MaxWidth="35">
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="{x:Type DataGridColumnHeader}">
+                                    <Setter Property="Padding" Value="3"/>
+                                    <Setter Property="Margin" Value="1"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
                                 </Style>
                             </DataGridTextColumn.HeaderStyle>
                         </DataGridTextColumn>
@@ -269,7 +280,7 @@
                 <TextBlock x:Name="Counter" TextWrapping="Wrap" Height="23" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="284" Margin="0,0,0,-23" Foreground="#FF636363" TextAlignment="Right"><Run Language="en-gb" Text=""/></TextBlock>
                 <Button Cursor="Hand" x:Name="FilterBtn" Click="FilterBtn_Click" Content="🔎" Height="31" VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Style="{DynamicResource MainButtonStyke}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Width="31" FontWeight="Normal" FontFamily="Dubai" FontSize="15" Margin="0,-2,32,0"/>
 
-                <Grid x:Name="ServerPage" Visibility="Hidden" Margin="-102,58,-43,-47">
+                <Grid x:Name="ServerPage" Visibility="Visible" Margin="-102,58,-43,-47">
                     <Rectangle x:Name="ServerPageBG" Stroke="Black" Fill="#CA000000" Margin="0,-125,0,10"/>
                     <Image x:Name="ServerBanner" Height="116" VerticalAlignment="Top" Stretch="UniformToFill" StretchDirection="Both"/>
                     <Rectangle Canvas.Left="688" Stroke="#FF9017AC" Canvas.Top="-144" Margin="-2,113,-2,2" Fill="#FF171717" StrokeThickness="2"/>
@@ -280,7 +291,9 @@
                     </Rectangle>
                     <Button x:Name="CloseServerBtn" Click="CloseServerBtn_Click" Cursor="Hand" Content="🞩" Style="{DynamicResource MainButtonStyke}" Height="40" Margin="0,20,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="40" FontFamily="Dubai" FontSize="20" Background="#AD171717" Foreground="White" BorderThickness="2,2,2,2" BorderBrush="#FF9017AC"/>
                     <TextBlock x:Name="ServerNameTxt" Height="43" Margin="10,130,10,0" TextWrapping="Wrap" Text="SERVER_NAME" VerticalAlignment="Top" Foreground="White" FontFamily="Dubai" FontSize="26" FontWeight="Bold"/>
-                    <TextBlock x:Name="PingTxt" Margin="0,89,0,0" TextWrapping="Wrap" Text="1000+ms" Foreground="#FF23CE00" FontFamily="Dubai" FontSize="20" FontWeight="Bold" HorizontalAlignment="Right" Width="83" Height="34" VerticalAlignment="Top"/>
+                    <TextBlock x:Name="PingTxt" Margin="10,188,517,0" TextWrapping="Wrap" Text="1000+ms" Foreground="#FF23CE00" FontFamily="Dubai" FontSize="16" FontWeight="Bold" Height="34" VerticalAlignment="Top"/>
+                    <TextBlock x:Name="IpTxt" Margin="10,160,0,0" TextWrapping="Wrap" Text="000.000.00.0" Foreground="#FF585858" FontFamily="Dubai" FontSize="20" FontWeight="Bold" Height="34" VerticalAlignment="Top" HorizontalAlignment="Left" Width="180"/>
+
                     <Button x:Name="JoinServerBtn" Click="PlayBtn_Click" Content="JOIN SERVER" Margin="0,0,10,10" Background="#FF9017AC" Foreground="White" BorderThickness="0,0,0,0" FontFamily="Dubai" FontSize="20" FontWeight="Bold" HorizontalAlignment="Right" Width="186" Height="59" VerticalAlignment="Bottom"/>
                 </Grid>
             </Grid>
