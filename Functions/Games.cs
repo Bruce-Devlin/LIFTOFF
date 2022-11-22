@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Net.Http;
+using System.Drawing;
+using System.Windows.Interop;
 
 namespace LIFTOFF.Functions
 {
@@ -50,7 +53,7 @@ namespace LIFTOFF.Functions
         {
             get
             {
-                Core.Log("Getting banner Image...");
+                Core.Log("Getting banner Image for " + AppID + "...");
                 ImageBrush bannerImg;
                 if (cachedBanner == null)
                 {
@@ -59,13 +62,14 @@ namespace LIFTOFF.Functions
 
                     if (bannerImg == null)
                     {
-                        Core.Log("Can't get custom banner! Using default instead.");
-                        bannerImg = Games.ImgBrushFromURL(DefaultBannerURL).Result; //Should be ("DefaultBannerURL").Result
+                        Core.Log("No custom banner, getting the default instead for " + AppID + ".");
+                        bannerImg = Games.ImgBrushFromURL(DefaultBannerURL).Result;
+                        cachedBanner = bannerImg;
                     }
-                    else Core.Log("Got cached banner.");
                 }
                 else
                 {
+                    Core.Log("Got cached banner for " + AppID + ".");
                     bannerImg = cachedBanner;
                 }
 
@@ -119,7 +123,6 @@ namespace LIFTOFF.Functions
 
             if (Functions.Core.getVariable("SteamLibsFile") == "")
             {
-                Functions.Core.Log("SHIT");
                 if (!File.Exists("C:\\Program Files (x86)\\Steam\\steamapps\\libraryfolders.vdf"))
                 {
                     await Functions.Core.Log("Cant find library file, please select a new one");
@@ -148,10 +151,14 @@ namespace LIFTOFF.Functions
                 Functions.Core.storeVariable("SteamLibsFile", SteamLibsFileLoc);
             }
 
-            await Core.Log("Steam Libary location: " + Functions.Core.getVariable("SteamLibsFile"));
+            bool installed = false;
 
-            bool r = File.ReadAllText(Functions.Core.getVariable("SteamLibsFile")).Contains(appID.ToString());
-            return r;
+            if (File.ReadAllText(Functions.Core.getVariable("SteamLibsFile")).Contains(appID.ToString()))
+                installed = true;
+
+            await Core.Log("App " + appID + " installed = " + installed);
+
+            return installed;
         }
 
         public static async Task<ImageBrush> ImgBrushFromURL(string URL = null)
@@ -161,51 +168,23 @@ namespace LIFTOFF.Functions
                 ImageBrush ImgBrush = new ImageBrush();
 
                 await Core.Log("Getting image from url (" + URL + ")");
-
-                UriBuilder uriBuilder = new UriBuilder(URL);
-                HttpWebRequest ImgRequest = null;
-                HttpWebResponse ImgResponse = null;
                 try
                 {
                     await Core.Log("Sending HTTP request...");
-                    ImgRequest = HttpWebRequest.CreateHttp(uriBuilder.Uri);
+                    var httpClient = new HttpClient();
 
-                    await Core.Log("Getting HTTP response...");
-                    ImgResponse = (HttpWebResponse)ImgRequest.GetResponse();
-                    BitmapImage ImgBitmap = new BitmapImage();
-
-                    await Core.Log("HTTP Status: " + ImgResponse.StatusCode.ToString());
-                    if (ImgResponse.StatusCode == HttpStatusCode.OK)
+                    Stream imageStream = httpClient.GetStreamAsync(URL).Result;
+                    using (Bitmap bitmap = new Bitmap(Image.FromStream(imageStream)))
                     {
-                        Stream ImgStream = ImgResponse.GetResponseStream();
-
-
-                        ImgBitmap.BeginInit();
-                        ImgBitmap.StreamSource = ImgStream;
-                        ImgBitmap.EndInit();
+                        ImgBrush.ImageSource = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(),
+                                                                            IntPtr.Zero,
+                                                                            Int32Rect.Empty,
+                                                                            BitmapSizeOptions.FromEmptyOptions());
                     }
-                    else if (ImgResponse.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        if (ImgRequest != null) ImgRequest.Abort();
-                        if (ImgResponse != null)
-                        {
-                            ImgResponse.Close();
-                            ImgResponse.Dispose();
-                        }
-                        return null;
-                    }
-
-                    ImgBrush.ImageSource = ImgBitmap;
                 }
                 catch
                 {
                     await Core.Log("Failed to get banner :/", true);
-                    if (ImgRequest != null) ImgRequest.Abort();
-                    if (ImgResponse != null)
-                    {
-                        ImgResponse.Close();
-                        ImgResponse.Dispose();
-                    }
                 }
                 
                 return ImgBrush;
@@ -250,6 +229,7 @@ namespace LIFTOFF.Functions
 
                 rocket.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\ROCKET.exe";
                 rocket.StartInfo.Arguments = "#join " + currServer.IPandPort() + " " + currServer.Game.AppID + " " + currServer.Game.Filename + " " + Variables.CurrentGame.AdditionalArguments;
+                rocket.StartInfo.Verb = "runas";
 
                 if (!Windows.Preloader.debug)
                 {
@@ -327,15 +307,17 @@ namespace LIFTOFF.Functions
         public static async Task GetSteamGames()
         {
             await Core.Log("Getting Steam Games");
-            string SteamLibsFile = Functions.Core.getVariable("SteamLibsFile");
+            Variables.SteamLibsFile = Functions.Core.getVariable("SteamLibsFile");
+            await Core.Log("Steam Library File: " + Variables.SteamLibsFile);
 
-            VToken steamLib = VdfConvert.Deserialize(SteamLibsFile).Value;
+            VProperty steamLibraries = VdfConvert.Deserialize(File.ReadAllText(Variables.SteamLibsFile));
+            await Core.Log("Found " + steamLibraries.Value.Count() + " libraries...");
 
-            foreach (VProperty steamLibrary in steamLib)
+            foreach (VProperty steamLibrary in steamLibraries.Value)
             {
                 int libraryID = 0;
-                bool canConvert = int.TryParse(steamLibrary.Key, out libraryID);
-                if (canConvert == true)
+                bool canRead = int.TryParse(steamLibrary.Key, out libraryID);
+                if (canRead == true)
                 {
                     await Core.Log("Found Steam Library (" + steamLibrary.Value["path"] + ")");
                     foreach (VProperty appid in steamLibrary.Value["apps"])
@@ -346,29 +328,33 @@ namespace LIFTOFF.Functions
                             await Core.Log("Adding game " + appid.Key);
                             VProperty steamGameInfo = VdfConvert.Deserialize(File.ReadAllText(steamLibrary.Value["path"] + "\\steamapps\\appmanifest_" + appid.Key + ".acf"));
 
-                            Game pg = new Game();
-                            pg.FileLocations = new List<string>();
-
-                            pg.GameIcon = null;
-                            pg.Title = steamGameInfo.Value["name"].Value<string>();
-                            pg.AppID = uint.Parse(appid.Key.Replace("\"", ""));
-
-                            pg.BannerURL = "";
-
-                            string[] executables = Directory.GetFiles(steamLibrary.Value["path"] + "\\steamapps\\common\\" + steamGameInfo.Value["installdir"], "*.EXE");
-                            foreach (string exe in executables) pg.FileLocations.Add(exe);
-
-                            pg.Filename = null;
-                            pg.LinkURL = null;
-                            pg.AdditionalArguments = "";
-
-                            if (!Variables.GameList.Any(featGame => featGame.AppID == pg.AppID))
+                            string name = steamGameInfo.Value["name"].Value<string>().ToLower();
+                            if (!name.Contains("server") && !name.Contains("tool"))
                             {
-                                Variables.GameList.Add(pg);
+                                Game pg = new Game();
+                                pg.FileLocations = new List<string>();
+
+                                pg.GameIcon = null;
+                                pg.Title = steamGameInfo.Value["name"].Value<string>();
+                                pg.AppID = uint.Parse(appid.Key.Replace("\"", ""));
+
+                                string[] executables = Directory.GetFiles(steamLibrary.Value["path"] + "\\steamapps\\common\\" + steamGameInfo.Value["installdir"], "*.EXE", SearchOption.AllDirectories);
+                                foreach (string exe in executables) pg.FileLocations.Add(exe);
+
+                                pg.Filename = null;
+                                pg.LinkURL = null;
+                                pg.AdditionalArguments = "";
+
+                                if (!Variables.GameList.Any(featGame => featGame.AppID == pg.AppID))
+                                {
+                                    Variables.GameList.Add(pg);
+                                }
                             }
+                            else await Core.Log(appid.Key + " is a server tool, ignoring.");
                         }
                     }
                 }
+                else await Core.Log("Couldn't read the library!", true);
             }
         }
     }

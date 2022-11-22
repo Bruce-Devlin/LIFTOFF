@@ -398,8 +398,10 @@ namespace LIFTOFF.Windows
                 client.Dispose();
             }
 
-            //Gets the game list
+            //Gets Steam Games
             Functions.Games.GetSteamGames();
+
+            //Sets tha Games combo box
             foreach (Functions.Game game in Variables.GameList)
             {
                 DataGridRow row = new DataGridRow();
@@ -407,8 +409,8 @@ namespace LIFTOFF.Windows
                 GamesCombo.Items.Add(row);
             }
 
-                //Intro
-                string introComplete = Functions.Core.getVariable("IntroComplete");
+            //Intro
+            string introComplete = Functions.Core.getVariable("IntroComplete");
             if (introComplete == "" || !bool.Parse(introComplete))
             {
                 //Show Intro
@@ -754,7 +756,7 @@ namespace LIFTOFF.Windows
             ServersPage.Visibility = Visibility.Visible;
             CurrentPage = "servers";
             PageName.Text = CurrentPage.ToUpper();
-            //ServerList.Items.Clear();
+            ServerList.ItemsSource = null;
             PlayBtn.IsEnabled = false;
 
             string savedServerCount = Functions.Core.getVariable("ServerCount");
@@ -843,12 +845,14 @@ namespace LIFTOFF.Windows
             string serverTitle = Server.Title.ToUpper() + " | Players: " + Server.Info.players + "/" + Server.Info.max_players;;
 
             long ping = long.Parse(Server.Ping);
+            string ip = Server.IPandPort();
            
             if (ping < 90) PingTxt.Foreground = new System.Windows.Media.SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF23CE00"));
             else if (ping > 90 && ping < 300) PingTxt.Foreground = new System.Windows.Media.SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFC3CE00"));
             else PingTxt.Foreground = new System.Windows.Media.SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF10CE00"));
             
             PingTxt.Text = ping.ToString() + "ms";
+            IpTxt.Text = ip;
             
             ServerNameTxt.Text = serverTitle;
 

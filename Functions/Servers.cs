@@ -43,6 +43,14 @@ namespace LIFTOFF.Functions
         public string FeaturedBanner { get; set; }
         public List<Mod> Mods { get; set; }
         public Game Game { get; set; }
+        public string NearPing 
+        {
+            get
+            {
+                return " ";
+            }
+        }
+
         public string Ping
         { 
             get
@@ -56,11 +64,11 @@ namespace LIFTOFF.Functions
 
                         string ping = "-";
 
-                        PingReply reply = pinger.Send(Info.addr);
+                        PingReply reply = pinger.Send(Info.addr, 5);
                         ping = reply.RoundtripTime.ToString();
 
 
-                        Core.Log("Ping for server \"" + Info.addr + "\" is: " + ping);
+                        Core.Log("Ping for server \"" + IPandPort() + "\" is: " + ping);
                         pinger.Dispose();
                         tmpPing = ping;
                         return ping;
